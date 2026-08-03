@@ -18,6 +18,12 @@ const ORDER = ['profile', 'insight', 'actions', 'plan'];
 
 export default function App() {
   const [lang, setLang] = useState('en');
+  // AC 1.2.4 — presentation preference, remembered across visits. It changes
+  // nothing about the content, so it is not part of the health profile and is
+  // never written to the database.
+  const [textSize, setTextSize] = useState(
+    () => globalThis.localStorage?.getItem('kirasihat.textSize') || 'normal'
+  );
   const [screen, setScreen] = useState('profile');
   const [reach, setReach] = useState('profile');       // furthest screen unlocked
   const [draft, setDraft] = useState(EMPTY_DRAFT);     // held in memory only
@@ -28,6 +34,10 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = lang === 'ms' ? 'ms' : 'en';
   }, [lang]);
+
+  useEffect(() => {
+    globalThis.localStorage?.setItem('kirasihat.textSize', textSize);
+  }, [textSize]);
 
   useEffect(() => {
     getPublishedBands().then(setBands).catch((err) => console.error(err));
@@ -79,13 +89,14 @@ export default function App() {
     setScreen('profile');
   };
 
-  const shared = { lang, setLang, go, reach };
+  const shared = { lang, setLang, textSize, setTextSize, go, reach };
+  const appClass = `app${textSize === 'large' ? ' app--lg' : ''}`;
 
   // A misconfigured build used to produce a silent blank page. Say what is wrong.
   const configError = getConfigError();
   if (configError) {
     return (
-      <div className="app">
+      <div className={appClass}>
         <header className="appbar">
           <h1>Configuration problem</h1>
         </header>
@@ -101,7 +112,7 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className={appClass}>
       {isMock() && (
         <div className="mockflag">
           MOCK MODE — reading data/seed-data.json, no Appwrite connection

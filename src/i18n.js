@@ -30,6 +30,18 @@ const S = {
     p_flag_sugary_drinks: 'I have sugary drinks most days',
     p_flag_no_screening_3y: 'I have not had a health screening in 3 years',
     p_flag_smoker: 'I smoke or vape',
+    // AC 1.1.3 — the fixed/changeable split.
+    // "Changeable" here means only that NHMS 2023 [R2] measures these as
+    // behaviours across Malaysian adults, so an action can address them.
+    // It is NOT a claim that changing one alters this user's own risk.
+    p_summary: 'Your answers',
+    p_fixedTitle: 'Fixed — used only to pick the right published data',
+    p_fixedBody: 'Age group and sex cannot be changed. They select which official figures to show.',
+    p_changeTitle: 'Changeable — what an action can address',
+    p_changeBody: 'NHMS 2023 measures these behaviours across Malaysian adults. Nothing here is a diagnosis.',
+    p_changeNone: 'You have not ticked any. You can still choose an action on the next screen.',
+    p_editHint: 'Change any answer above; this summary updates as you go.',
+    p_notSet: 'Not chosen yet',
     p_consent:
       'I agree that this app shows population context only. It is not a diagnosis. I can delete my data at any time.',
     p_err_band: 'Please choose an age band before continuing.',
@@ -82,6 +94,11 @@ const S = {
     g_target: (done, target) => `Target: ${target} days · Done: ${done} days`,
     g_edit: 'Change goal',
     g_stop: 'Stop this goal',
+    g_complete: 'Mark as complete',
+    g_completed: 'Goal completed. You can start a new one whenever you are ready.',
+    textSize: 'Text size',
+    textSizeNormal: 'Normal text size',
+    textSizeLarge: 'Larger text size',
     g_screening: 'Prepare for screening',
     g_screeningBody:
       'MySejahtera gives special focus to adults aged 40 and above and to people not screened for three years.',
@@ -137,6 +154,14 @@ const S = {
     p_flag_sugary_drinks: 'Saya minum minuman manis hampir setiap hari',
     p_flag_no_screening_3y: 'Saya tidak buat saringan kesihatan dalam 3 tahun',
     p_flag_smoker: 'Saya merokok atau vape',
+    p_summary: 'Jawapan anda',
+    p_fixedTitle: 'Tetap — hanya untuk memilih data terbitan yang betul',
+    p_fixedBody: 'Kumpulan umur dan jantina tidak boleh diubah. Ia memilih angka rasmi yang dipaparkan.',
+    p_changeTitle: 'Boleh diubah — perkara yang boleh ditangani oleh sesuatu tindakan',
+    p_changeBody: 'NHMS 2023 mengukur tingkah laku ini dalam kalangan dewasa Malaysia. Tiada apa-apa di sini yang merupakan diagnosis.',
+    p_changeNone: 'Anda belum menanda apa-apa. Anda masih boleh memilih tindakan di skrin seterusnya.',
+    p_editHint: 'Tukar mana-mana jawapan di atas; ringkasan ini dikemas kini secara automatik.',
+    p_notSet: 'Belum dipilih',
     p_consent:
       'Saya faham aplikasi ini hanya menunjukkan konteks populasi. Ia bukan diagnosis. Saya boleh padam data saya bila-bila masa.',
     p_err_band: 'Sila pilih kumpulan umur sebelum meneruskan.',
@@ -184,6 +209,11 @@ const S = {
     g_target: (done, target) => `Sasaran: ${target} hari · Selesai: ${done} hari`,
     g_edit: 'Tukar matlamat',
     g_stop: 'Hentikan matlamat ini',
+    g_complete: 'Tandakan sebagai selesai',
+    g_completed: 'Matlamat selesai. Anda boleh mulakan yang baharu bila-bila anda bersedia.',
+    textSize: 'Saiz teks',
+    textSizeNormal: 'Saiz teks biasa',
+    textSizeLarge: 'Saiz teks lebih besar',
     g_screening: 'Bersedia untuk saringan',
     g_screeningBody:
       'MySejahtera memberi tumpuan khas kepada dewasa 40 tahun ke atas dan mereka yang tidak disaring selama tiga tahun.',

@@ -7,8 +7,10 @@ import { getMortalityContext, getFactorPrevalence, getSources } from '../lib/db.
  * Screen 2 — features F04, F05, F06, F07, F08.
  * Reads only. Nothing about the user is written to the database here.
  */
-export default function Insight({ lang, setLang, draft, publishedBand, onNext, go, reach }) {
+export default function Insight({ lang, setLang, textSize, setTextSize, draft, publishedBand, onNext, go, reach }) {
   const S = t(lang);
+  // One bundle for the app bar so a new control cannot be forgotten at a call site.
+  const bar = { lang, setLang, textSize, setTextSize };
   const [state, setState] = useState({ status: 'loading' });
 
   useEffect(() => {
@@ -39,8 +41,7 @@ export default function Insight({ lang, setLang, draft, publishedBand, onNext, g
   return (
     <>
       <AppBar
-        lang={lang}
-        setLang={setLang}
+        {...bar}
         title={S.i_title}
         sub={S.i_sub(publishedBand ?? '—', year)}
       />

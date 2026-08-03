@@ -2,7 +2,7 @@ import React from 'react';
 import { t, field } from '../i18n.js';
 
 /** Teal header with brand, BM/EN toggle, title and optional step line. */
-export function AppBar({ lang, setLang, step, title, sub }) {
+export function AppBar({ lang, setLang, textSize, setTextSize, step, title, sub }) {
   const S = t(lang);
   return (
     <header className="appbar">
@@ -11,17 +11,37 @@ export function AppBar({ lang, setLang, step, title, sub }) {
           <span className="appbar__mark" aria-hidden="true">✓</span>
           {S.brand}
         </div>
-        <div className="langtoggle" role="group" aria-label="Language / Bahasa">
-          {['ms', 'en'].map((code) => (
-            <button
-              key={code}
-              type="button"
-              aria-pressed={lang === code}
-              onClick={() => setLang(code)}
-            >
-              {code === 'ms' ? 'BM' : 'EN'}
-            </button>
-          ))}
+        <div style={{ display: 'flex', gap: 8 }}>
+          {/* AC 1.2.4 — text size sits beside language; both change presentation
+              only, never the content or its meaning. */}
+          <div className="langtoggle" role="group" aria-label={S.textSize}>
+            {[
+              ['normal', 'A', S.textSizeNormal],
+              ['large', 'A+', S.textSizeLarge],
+            ].map(([size, glyph, label]) => (
+              <button
+                key={size}
+                type="button"
+                aria-pressed={textSize === size}
+                aria-label={label}
+                onClick={() => setTextSize(size)}
+              >
+                {glyph}
+              </button>
+            ))}
+          </div>
+          <div className="langtoggle" role="group" aria-label="Language / Bahasa">
+            {['ms', 'en'].map((code) => (
+              <button
+                key={code}
+                type="button"
+                aria-pressed={lang === code}
+                onClick={() => setLang(code)}
+              >
+                {code === 'ms' ? 'BM' : 'EN'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
       {step && <div className="appbar__step">{step}</div>}

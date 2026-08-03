@@ -10,8 +10,10 @@ const MYSEJAHTERA =
  * Screen 4 — features F12, F13, F14, F15, F16.
  * This is the only screen backed by rows the user owns.
  */
-export default function Plan({ lang, setLang, draft, onRestart, go, reach }) {
+export default function Plan({ lang, setLang, textSize, setTextSize, draft, onRestart, go, reach }) {
   const S = t(lang);
+  // One bundle for the app bar so a new control cannot be forgotten at a call site.
+  const bar = { lang, setLang, textSize, setTextSize };
   const [goal, setGoal] = useState(null);
   const [action, setAction] = useState(null);
   const [status, setStatus] = useState('loading');
@@ -46,6 +48,17 @@ export default function Plan({ lang, setLang, draft, onRestart, go, reach }) {
     if (!goal) return;
     await updateGoal(goal.$id, { status: 'stopped' });
     setGoal(null);
+    setMessage('');
+  };
+
+  // AC 2.2.2 — a goal can be completed, not only stopped. Completing is always
+  // available; it does not require hitting the target, because a forced target
+  // would be the streak pressure F15 exists to avoid.
+  const completeGoal = async () => {
+    if (!goal) return;
+    await updateGoal(goal.$id, { status: 'completed' });
+    setGoal(null);
+    setMessage(S.g_completed);
   };
 
   const toggleReminder = async (on) => {
@@ -74,7 +87,7 @@ export default function Plan({ lang, setLang, draft, onRestart, go, reach }) {
 
   return (
     <>
-      <AppBar lang={lang} setLang={setLang} title={S.g_title} sub={S.g_sub} />
+      <AppBar {...bar} title={S.g_title} sub={S.g_sub} />
 
       <main className="screen screen--withnav">
         {status === 'loading' && <p className="muted">{S.loading}</p>}
@@ -106,6 +119,9 @@ export default function Plan({ lang, setLang, draft, onRestart, go, reach }) {
                   ))}
                 </div>
                 <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
+                  <button className="btn btn--sm" type="button" onClick={completeGoal}>
+                    {S.g_complete}
+                  </button>
                   <button className="btn btn--sm btn--ghost" style={{ color: '#fff', borderColor: '#4e7c88' }} type="button" onClick={() => go('actions')}>
                     {S.g_edit}
                   </button>

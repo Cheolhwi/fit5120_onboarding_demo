@@ -233,6 +233,41 @@ a { color: var(--teal); }
   font-size: 12px; padding: 6px 12px; font-weight: 600;
 }
 
+/* ---------------------------------------------------------------- AC 1.2.4
+   Larger text. Only sizes change — no content is dropped or truncated, so the
+   meaning is identical at either setting. Sizes are listed explicitly rather
+   than scaled by a root font-size, because the base stylesheet uses px. */
+.app--lg { font-size: 18px; }
+.app--lg .appbar h1 { font-size: 29px; }
+.app--lg .appbar__sub,
+.app--lg .check,
+.app--lg .band,
+.app--lg .field select,
+.app--lg p { font-size: 18px; }
+.app--lg legend,
+.app--lg h3 { font-size: 19px; }
+.app--lg h2 { font-size: 22px; }
+.app--lg .muted { font-size: 16px; }
+.app--lg .small { font-size: 15.5px; }
+.app--lg .action__title { font-size: 19px; }
+.app--lg .action__reason,
+.app--lg .action__step,
+.app--lg .banner,
+.app--lg .qlist li { font-size: 16px; }
+.app--lg .btn { font-size: 19px; min-height: 56px; }
+.app--lg .sourcechip,
+.app--lg .chip,
+.app--lg .tag { font-size: 14.5px; }
+.app--lg .nav button { font-size: 14.5px; }
+
+.summary { display: flex; flex-direction: column; gap: 12px; }
+.summary__block { border-left: 3px solid var(--line); padding-left: 12px; }
+.summary__block--fixed { border-left-color: var(--muted); }
+.summary__block--change { border-left-color: var(--green); }
+.summary__block h4 { margin: 0 0 4px; font-size: 14px; }
+.summary__block ul { margin: 6px 0 0; padding-left: 20px; }
+.summary__block li { font-size: 14px; margin-bottom: 3px; }
+
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;

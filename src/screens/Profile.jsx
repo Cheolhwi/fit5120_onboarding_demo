@@ -16,8 +16,10 @@ const FLAGS = ['sedentary', 'sugary_drinks', 'no_screening_3y', 'smoker'];
  * Nothing here is written to the database. The profile is held in memory
  * until the user saves a goal on screen 4.
  */
-export default function Profile({ lang, setLang, draft, setDraft, onContinue, publishedBand }) {
+export default function Profile({ lang, setLang, textSize, setTextSize, draft, setDraft, onContinue, publishedBand }) {
   const S = t(lang);
+  // One bundle for the app bar so a new control cannot be forgotten at a call site.
+  const bar = { lang, setLang, textSize, setTextSize };
   const [errors, setErrors] = useState([]);
 
   const set = (patch) => setDraft({ ...draft, ...patch });
@@ -41,7 +43,7 @@ export default function Profile({ lang, setLang, draft, setDraft, onContinue, pu
 
   return (
     <>
-      <AppBar lang={lang} setLang={setLang} step={S.p_step} title={S.p_title} sub={S.p_sub} />
+      <AppBar {...bar} step={S.p_step} title={S.p_title} sub={S.p_sub} />
 
       <form className="screen" onSubmit={submit} noValidate>
         {errors.length > 0 && (
@@ -128,6 +130,50 @@ export default function Profile({ lang, setLang, draft, setDraft, onContinue, pu
             ))}
           </div>
         </fieldset>
+
+        {/* AC 1.1.3 — summary that separates fixed from changeable, and stays
+            editable because every field above remains live. "Changeable" means
+            only that NHMS 2023 [R2] measures these behaviours across Malaysian
+            adults; it makes no claim about this person's own risk. */}
+        <section className="card" aria-live="polite">
+          <h3>{S.p_summary}</h3>
+          <div className="summary">
+            <div className="summary__block summary__block--fixed">
+              <h4>{S.p_fixedTitle}</h4>
+              <p className="muted small">{S.p_fixedBody}</p>
+              <ul>
+                <li>
+                  {S.p_ageBand}: <b>{draft.ageBand || S.p_notSet}</b>
+                </li>
+                <li>
+                  {S.p_sex}:{' '}
+                  <b>
+                    {draft.sex === 'male'
+                      ? S.p_male
+                      : draft.sex === 'female'
+                        ? S.p_female
+                        : S.p_notSaid}
+                  </b>
+                </li>
+              </ul>
+            </div>
+
+            <div className="summary__block summary__block--change">
+              <h4>{S.p_changeTitle}</h4>
+              <p className="muted small">{S.p_changeBody}</p>
+              {draft.lifestyle.length === 0 ? (
+                <p className="muted small">{S.p_changeNone}</p>
+              ) : (
+                <ul>
+                  {draft.lifestyle.map((flag) => (
+                    <li key={flag}>{S[`p_flag_${flag}`]}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+          <p className="muted small" style={{ marginTop: 10 }}>{S.p_editHint}</p>
+        </section>
 
         {/* F03 — explicit, versioned consent */}
         <div className="banner banner--amber">

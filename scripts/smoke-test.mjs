@@ -33,9 +33,14 @@ function bundle() {
 }
 
 async function main() {
+  // An uncaught exception in the app must fail the run. Previously these were
+  // only printed, so a dead click handler could still leave every check green.
+  const runtimeErrors = [];
   const vc = new VirtualConsole();
   vc.on('jsdomError', (e) => {
-    if (!/Not implemented/.test(e.message)) console.error('jsdom:', e.message);
+    if (/Not implemented/.test(e.message)) return;
+    runtimeErrors.push(e.message.split('\n')[0]);
+    console.error('  jsdom:', e.message.split('\n')[0]);
   });
 
   const dom = new JSDOM('<!doctype html><html><body><div id="root"></div></body></html>', {
@@ -72,7 +77,11 @@ async function main() {
 
   console.log('\nSCREEN 1 — context profile');
   check('boot', 'App mounts', doc.querySelector('.appbar') !== null);
-  check('F17', 'BM/EN toggle present', doc.querySelectorAll('.langtoggle button').length === 2);
+  // Two toggle groups now: text size (A / A+) and language (BM / EN).
+  const toggle = (label) =>
+    [...doc.querySelectorAll('.langtoggle button')].find((b) => b.textContent.trim() === label);
+  check('F17', 'BM/EN toggle present', !!toggle('BM') && !!toggle('EN'));
+  check('AC124', 'Text size toggle present', !!toggle('A') && !!toggle('A+'));
   check('F01', 'Age bands offered are DOSM\'s own', doc.querySelectorAll('.band').length === 3,
     [...doc.querySelectorAll('.band')].map((b) => b.textContent.trim()).join(' / '));
   check('F02', 'Lifestyle checklist rendered', doc.querySelectorAll('.check input').length === 4);
@@ -104,6 +113,32 @@ async function main() {
   await setChecked(doc.querySelectorAll('.check input')[1], true);   // sugary drinks -> diet
   await setChecked(doc.querySelectorAll('.check input')[2], true);   // no screening 3y -> screening
   await setChecked(doc.querySelectorAll('.check input')[3], true);   // smoker -> no content
+  // AC 1.1.3 — summary separates fixed from changeable and reflects live edits.
+  check('AC113', 'Profile summary is shown', !!doc.querySelector('.summary'));
+  check('AC113', 'Fixed factors are named as fixed',
+    text().includes('Fixed — used only to pick the right published data'));
+  check('AC113', 'Changeable factors are named separately',
+    text().includes('Changeable — what an action can address'));
+  check('AC113', 'Summary reflects the ticked answers',
+    doc.querySelector('.summary__block--change ul')?.children.length === 3);
+  check('AC113', 'Summary shows the chosen age band',
+    doc.querySelector('.summary__block--fixed')?.textContent.includes('41-59'));
+  check('safety', 'Changeable split makes no personal-risk claim',
+    !/your risk|lowers? your|reduces? your/i.test(
+      doc.querySelector('.summary')?.textContent ?? ''));
+
+  // AC 1.2.4 — larger text changes size only.
+  const beforeLarge = text();
+  await click(toggle('A+'));
+  const wentLarge = !!doc.querySelector('.app--lg');
+  check('AC124', 'Larger text setting applies', wentLarge);
+  // Gated on the toggle having worked, so a dead control cannot pass this.
+  check('AC124', 'Content is identical at the larger size',
+    wentLarge && text() === beforeLarge);
+  await click(toggle('A'));
+  check('AC124', 'Normal text setting restores',
+    wentLarge && !doc.querySelector('.app--lg'));
+
   await setChecked(doc.querySelector('.consent input'), true);
   await click(byText('Continue'));
   await sleep(350);
@@ -184,10 +219,11 @@ async function main() {
   check('F15', 'Reminder is a toggle the user controls',
     !!doc.querySelector('.switch input[type="checkbox"]'));
   check('F16', 'Delete-my-data control reachable from the plan', !!byText('Delete my data'));
+  check('AC222', 'Complete control is offered alongside stop', !!byText('Mark as complete'));
 
   console.log('\nBILINGUAL — switching to BM');
   const goalTitleEn = doc.querySelector('.card--teal h2')?.textContent.trim();
-  await click(doc.querySelectorAll('.langtoggle button')[0]);
+  await click(toggle('BM'));
   await sleep(400);
   const goalTitleMs = doc.querySelector('.card--teal h2')?.textContent.trim();
   check('F17', 'Screen re-renders in Bahasa Melayu', text().includes('Pelan saya'));
@@ -197,11 +233,26 @@ async function main() {
     !!goalTitleMs && goalTitleMs !== goalTitleEn, `${goalTitleEn} -> ${goalTitleMs}`);
   check('F17', 'html lang attribute follows', doc.documentElement.lang === 'ms');
 
+  // AC 2.2.2 — done last, because completing removes the goal card the
+  // bilingual checks above read from.
+  console.log('\nCOMPLETING A GOAL');
+  await click(toggle('EN'));
+  await sleep(300);
+  await click(byText('Mark as complete'));
+  await sleep(350);
+  check('AC222', 'Completing clears the active goal and confirms it',
+    text().includes('Goal completed'));
+  check('AC222', 'A new goal can be started afterwards', !!byText('Start again'));
+  check('AC222', 'Completing is not gated on hitting the target',
+    !/must complete|reach your target/i.test(text()));
+
   console.log('\nSAFETY SWEEP — the whole session');
   const all = text();
   const forbidden = [/\b\d{1,3}%\s*(risk|chance|probability)/i, /your risk is/i, /you have a \d/i];
   check('F08', 'No personal risk claim anywhere in the flow',
     forbidden.every((re) => !re.test(all)));
+  check('runtime', 'No uncaught errors during the whole session',
+    runtimeErrors.length === 0, runtimeErrors.join(' | '));
 
   const failed = results.filter((r) => !r.ok);
   console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);

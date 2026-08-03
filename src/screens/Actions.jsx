@@ -8,8 +8,10 @@ import { getActions, getSources, topicsForFlags, FLAGS_WITHOUT_ACTION } from '..
  * Single-select. Every option carries source, reason, first step and a
  * safety note; the urgent-symptom route is always visible, never behind a tap.
  */
-export default function Actions({ lang, setLang, draft, selected, setSelected, onSave, go, reach }) {
+export default function Actions({ lang, setLang, textSize, setTextSize, draft, selected, setSelected, onSave, go, reach }) {
   const S = t(lang);
+  // One bundle for the app bar so a new control cannot be forgotten at a call site.
+  const bar = { lang, setLang, textSize, setTextSize };
   const [state, setState] = useState({ status: 'loading' });
   const [touched, setTouched] = useState(false);
 
@@ -42,7 +44,7 @@ export default function Actions({ lang, setLang, draft, selected, setSelected, o
 
   return (
     <>
-      <AppBar lang={lang} setLang={setLang} title={S.a_title} sub={S.a_sub} />
+      <AppBar {...bar} title={S.a_title} sub={S.a_sub} />
 
       <main className="screen screen--withnav">
         {state.status === 'loading' && <p className="muted">{S.loading}</p>}

@@ -130,6 +130,7 @@ export default function App() {
       {screen === 'actions' && (
         <Actions
           {...shared}
+          draft={draft}
           selected={selected}
           setSelected={setSelected}
           onSave={saveGoalAndPlan}

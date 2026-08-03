@@ -101,7 +101,9 @@ async function main() {
   check('F01', 'Minimum-data promise is shown to the user',
     /date of birth/i.test(text()));
 
-  await setChecked(doc.querySelectorAll('.check input')[2], true);   // no screening 3y
+  await setChecked(doc.querySelectorAll('.check input')[1], true);   // sugary drinks -> diet
+  await setChecked(doc.querySelectorAll('.check input')[2], true);   // no screening 3y -> screening
+  await setChecked(doc.querySelectorAll('.check input')[3], true);   // smoker -> no content
   await setChecked(doc.querySelector('.consent input'), true);
   await click(byText('Continue'));
   await sleep(350);
@@ -135,16 +137,37 @@ async function main() {
     (text().match(/Safety note:/g) || []).length === radios.length);
   check('F11', 'Urgent-symptom route always visible', text().includes('Chest pain, breathlessness or fainting'));
 
+  // F02 — the checklist must visibly change this screen, or it is decoration.
+  const cards = [...doc.querySelectorAll('.action')];
+  const titleOf = (c) => c.querySelector('.action__title')?.textContent.trim() ?? '';
+  const matched = cards.filter((c) => c.textContent.includes('Matches what you told us'));
+  check('F02', 'Ticked answers are matched to action topics', matched.length === 2,
+    matched.map(titleOf).join(' | '));
+  check('F02', 'Matched actions are ordered first',
+    cards.slice(0, 2).every((c) => c.textContent.includes('Matches what you told us')));
+  check('F02', 'Unmatched actions are still offered, not withheld', cards.length === 3);
+  check('F02', 'Ordering is explained to the user', text().includes('Ordered by what you ticked'));
+  // The honesty case: a ticked box with no reviewed content says so.
+  check('F02', 'Ticked smoking states that no reviewed content exists',
+    text().includes('no reviewed quit-support content'));
+  check('safety', 'No quit-smoking action was invented to fill the gap',
+    !/quit smoking|stop smoking/i.test(cards.map(titleOf).join(' ')));
+
   await click(byText('Save as my weekly goal'));
   check('F09', 'Blocks save with nothing selected', text().includes('Choose one action to continue'));
 
+  // Pick the top-ranked action and remember it, so screen 4 can be checked
+  // against what was actually chosen rather than a hardcoded title.
+  const chosenCard = radios[0].closest('.action');
+  const chosenTitle = titleOf(chosenCard);
   await setChecked(radios[0], true);
   await click(byText('Save as my weekly goal'));
   await sleep(500);
 
   console.log('\nSCREEN 4 — plan and screening');
   check('nav', 'Advanced to plan screen', text().includes('My plan'));
-  check('F14', 'Goal saved and shown', text().includes('Walk 30 minutes'));
+  check('F14', 'The goal saved is the one the user selected',
+    text().includes(chosenTitle), `"${chosenTitle}"`);
   check('F14', 'Progress starts at zero', text().includes('Done: 0 days'));
   const dots = [...doc.querySelectorAll('.dot')];
   check('F14', 'One dot per target day', dots.length === 5, `${dots.length} dots`);
@@ -154,16 +177,24 @@ async function main() {
   check('F15', 'Progress can go down — no forced streak', text().includes('Done: 0 days'));
   check('F12', 'MySejahtera screening link present',
     !![...doc.querySelectorAll('a')].find((a) => a.href.includes('mysejahtera.moh.gov.my')));
+  check('F12', 'Says which published criterion the user matched',
+    text().includes('both published criteria'),
+    'age 41-59 + no screening in 3 years');
   check('F13', 'Clinician questions listed', doc.querySelectorAll('.qlist li').length === 3);
   check('F15', 'Reminder is a toggle the user controls',
     !!doc.querySelector('.switch input[type="checkbox"]'));
   check('F16', 'Delete-my-data control reachable from the plan', !!byText('Delete my data'));
 
   console.log('\nBILINGUAL — switching to BM');
+  const goalTitleEn = doc.querySelector('.card--teal h2')?.textContent.trim();
   await click(doc.querySelectorAll('.langtoggle button')[0]);
   await sleep(400);
+  const goalTitleMs = doc.querySelector('.card--teal h2')?.textContent.trim();
   check('F17', 'Screen re-renders in Bahasa Melayu', text().includes('Pelan saya'));
-  check('F17', 'Action content swaps language too', text().includes('Berjalan 30 minit'));
+  // Content comes from action_content rows keyed by language, so the saved
+  // goal's title must change with the toggle — whichever action was chosen.
+  check('F17', 'Action content swaps language too',
+    !!goalTitleMs && goalTitleMs !== goalTitleEn, `${goalTitleEn} -> ${goalTitleMs}`);
   check('F17', 'html lang attribute follows', doc.documentElement.lang === 'ms');
 
   console.log('\nSAFETY SWEEP — the whole session');

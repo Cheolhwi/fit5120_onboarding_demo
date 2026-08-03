@@ -102,24 +102,70 @@ export async function getFactorPrevalence(limit = 4) {
   return res.rows;
 }
 
-/** Approved action catalogue for one language. */
-export async function getActions(language = 'en') {
+/**
+ * Which action topic each lifestyle answer points at.
+ *
+ * Every mapping must be defensible from a source in the reference list.
+ * A flag with no reviewed content gets NO topic — the UI says so rather than
+ * inventing an action to make the checkbox feel responsive.
+ *
+ *   sedentary        -> activity   NHMS 2023: physically inactive 29.9% [R2];
+ *                                  WHO adult activity guidance [R6]
+ *   sugary_drinks    -> diet       NHMS 2023: diabetes prevalence 15.6% [R2]
+ *   no_screening_3y  -> screening  MySejahtera targets people who "do not undergo
+ *                                  any health screening in the last 3 years" [R4]
+ *   smoker           -> (none)     No reviewed cessation content exists. "Quit
+ *                                  support" is rated Could in the Lotus Blossom
+ *                                  and needs a clinical partner before publishing.
+ */
+export const FLAG_TO_TOPIC = {
+  sedentary: 'activity',
+  sugary_drinks: 'diet',
+  no_screening_3y: 'screening',
+};
+
+/** Flags the user can tick that currently have no action to offer. */
+export const FLAGS_WITHOUT_ACTION = ['smoker'];
+
+export const topicsForFlags = (flags = []) =>
+  [...new Set(flags.map((f) => FLAG_TO_TOPIC[f]).filter(Boolean))];
+
+/**
+ * Approved action catalogue for one language.
+ *
+ * `topics` RANKS the catalogue, it does not filter it. Two reasons:
+ * AC 2.1.1 requires two or three actions to be offered, and withholding general
+ * preventive guidance because someone left a box unticked would be worse advice,
+ * not safer advice. Matched rows are flagged so the UI can say why they are first.
+ */
+export async function getActions(language = 'en', topics = []) {
+  let rows;
   if (MOCK) {
-    return mock.action_content
-      .filter((r) => r.language === language && r.review_status === 'approved')
-      .sort((a, b) => (a.sort_order ?? 99) - (b.sort_order ?? 99));
+    rows = mock.action_content.filter(
+      (r) => r.language === language && r.review_status === 'approved'
+    );
+  } else {
+    const res = await tablesDB.listRows({
+      databaseId: DB_ID,
+      tableId: 'action_content',
+      queries: [
+        Query.equal('language', language),
+        Query.equal('review_status', 'approved'),
+        Query.orderAsc('sort_order'),
+        Query.limit(20),
+      ],
+    });
+    rows = res.rows;
   }
-  const res = await tablesDB.listRows({
-    databaseId: DB_ID,
-    tableId: 'action_content',
-    queries: [
-      Query.equal('language', language),
-      Query.equal('review_status', 'approved'),
-      Query.orderAsc('sort_order'),
-      Query.limit(20),
-    ],
-  });
-  return res.rows;
+
+  const wanted = new Set(topics);
+  return rows
+    .map((r) => ({ ...r, matched: wanted.has(r.topic) }))
+    .sort(
+      (a, b) =>
+        Number(b.matched) - Number(a.matched) ||
+        (a.sort_order ?? 99) - (b.sort_order ?? 99)
+    );
 }
 
 /** One source registry entry, for the source label under every figure. */

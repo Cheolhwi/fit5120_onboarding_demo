@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { AppBar, SourceChip, NavBar } from '../components/common.jsx';
 import { t } from '../i18n.js';
-import { getActions, getSources } from '../lib/db.js';
+import { getActions, getSources, topicsForFlags, FLAGS_WITHOUT_ACTION } from '../lib/db.js';
 
 /**
  * Screen 3 — features F09, F10, F11.
  * Single-select. Every option carries source, reason, first step and a
  * safety note; the urgent-symptom route is always visible, never behind a tap.
  */
-export default function Actions({ lang, setLang, selected, setSelected, onSave, go, reach }) {
+export default function Actions({ lang, setLang, draft, selected, setSelected, onSave, go, reach }) {
   const S = t(lang);
   const [state, setState] = useState({ status: 'loading' });
   const [touched, setTouched] = useState(false);
+
+  const flags = draft?.lifestyle ?? [];
+  const topics = topicsForFlags(flags);
+  const unanswered = flags.filter((f) => FLAGS_WITHOUT_ACTION.includes(f));
+  const topicKey = topics.join(',');
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         setState({ status: 'loading' });
-        const actions = await getActions(lang);
+        const actions = await getActions(lang, topics);
         const sources = await getSources(actions.map((a) => a.source_id));
         if (!cancelled) setState({ status: 'ready', actions, sources });
       } catch (err) {
@@ -27,7 +32,8 @@ export default function Actions({ lang, setLang, selected, setSelected, onSave, 
       }
     })();
     return () => { cancelled = true; };
-  }, [lang]);
+    // topicKey rather than the array so the effect does not refire every render
+  }, [lang, topicKey]);
 
   const save = () => {
     if (!selected) { setTouched(true); return; }
@@ -44,6 +50,17 @@ export default function Actions({ lang, setLang, selected, setSelected, onSave, 
 
         {state.status === 'ready' && (
           <>
+            {/* Says why the order is what it is — the checklist is visibly used */}
+            <p className="muted small">{S.a_why(topics.length)}</p>
+
+            {/* A ticked box with no reviewed content is stated, not papered over */}
+            {unanswered.length > 0 && (
+              <div className="banner banner--amber" role="note">
+                <span className="banner__icon" aria-hidden="true">!</span>
+                <span>{S.a_noContent}</span>
+              </div>
+            )}
+
             <fieldset>
               <legend className="sr-only">{S.a_title}</legend>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -63,6 +80,14 @@ export default function Actions({ lang, setLang, selected, setSelected, onSave, 
                       />
                       <span>
                         <span className="action__title">{a.title}</span>
+                        {a.matched && (
+                          <span
+                            className="chip chip--effort"
+                            style={{ marginBottom: 6 }}
+                          >
+                            {S.a_matched}
+                          </span>
+                        )}
                         {/* F10 — the reason names the guidance behind the action */}
                         <span className="action__reason">{a.reason}</span>
                         <span className="action__step">

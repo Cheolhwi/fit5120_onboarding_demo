@@ -65,6 +65,15 @@ const S = {
     a_urgentBody: 'Get urgent care now. Do not wait for a weekly goal.',
     a_save: 'Save as my weekly goal',
     a_pick: 'Choose one action to continue.',
+    a_matched: 'Matches what you told us',
+    a_why: (n) =>
+      n === 0
+        ? 'You did not tick anything on the checklist, so these are shown in the default order.'
+        : `Ordered by what you ticked on the checklist. All ${
+            n === 1 ? 'other options remain' : 'options remain'
+          } available.`,
+    a_noContent:
+      'You ticked smoking or vaping. We have no reviewed quit-support content yet, so no action is offered for it. Ask a clinician or your Klinik Kesihatan about quit services.',
 
     // screen 4
     g_title: 'My plan',
@@ -76,6 +85,11 @@ const S = {
     g_screening: 'Prepare for screening',
     g_screeningBody:
       'MySejahtera gives special focus to adults aged 40 and above and to people not screened for three years.',
+    g_screeningWhy: {
+      both: 'You match both published criteria: aged 40 or over, and no screening in the last 3 years.',
+      age: 'You match one published criterion: aged 40 or over.',
+      screening: 'You match one published criterion: no screening in the last 3 years.',
+    },
     g_openLink: 'Open MySejahtera screening guide',
     g_officialLink: 'Official link · MOH Malaysia',
     g_questions: 'Questions to ask the clinician',
@@ -156,6 +170,13 @@ const S = {
     a_urgentBody: 'Dapatkan rawatan segera. Jangan tunggu matlamat mingguan.',
     a_save: 'Simpan sebagai matlamat mingguan',
     a_pick: 'Pilih satu tindakan untuk meneruskan.',
+    a_matched: 'Sepadan dengan jawapan anda',
+    a_why: (n) =>
+      n === 0
+        ? 'Anda tidak menanda apa-apa dalam senarai semak, jadi ini dipaparkan mengikut susunan lalai.'
+        : 'Disusun mengikut apa yang anda tanda dalam senarai semak. Semua pilihan lain masih tersedia.',
+    a_noContent:
+      'Anda menanda merokok atau vape. Kami belum mempunyai kandungan sokongan berhenti merokok yang disemak, jadi tiada tindakan ditawarkan untuknya. Sila rujuk doktor atau Klinik Kesihatan anda tentang perkhidmatan berhenti merokok.',
 
     g_title: 'Pelan saya',
     g_sub: 'Satu matlamat pada satu masa. Tiada rentetan, tiada tekanan.',
@@ -166,6 +187,11 @@ const S = {
     g_screening: 'Bersedia untuk saringan',
     g_screeningBody:
       'MySejahtera memberi tumpuan khas kepada dewasa 40 tahun ke atas dan mereka yang tidak disaring selama tiga tahun.',
+    g_screeningWhy: {
+      both: 'Anda memenuhi kedua-dua kriteria terbitan: berumur 40 tahun ke atas, dan tiada saringan dalam 3 tahun lepas.',
+      age: 'Anda memenuhi satu kriteria terbitan: berumur 40 tahun ke atas.',
+      screening: 'Anda memenuhi satu kriteria terbitan: tiada saringan dalam 3 tahun lepas.',
+    },
     g_openLink: 'Buka panduan saringan MySejahtera',
     g_officialLink: 'Pautan rasmi · KKM Malaysia',
     g_questions: 'Soalan untuk ditanya kepada doktor',

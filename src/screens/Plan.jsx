@@ -63,10 +63,14 @@ export default function Plan({ lang, setLang, draft, onRestart, go, reach }) {
     onRestart();
   };
 
-  const screeningRelevant =
-    draft.lifestyle.includes('no_screening_3y') ||
-    draft.ageBand === '41-59' ||
-    draft.ageBand === '60+';
+  // MySejahtera's published target profile [R4]: "Aged 40 years and above ...
+  // Do not undergo any health screening in the last 3 years". Both are shown as
+  // separate criteria, so either one qualifies — but we say which one matched
+  // rather than leaving the user to guess.
+  const byAge = draft.ageBand === '41-59' || draft.ageBand === '60+';
+  const byGap = draft.lifestyle.includes('no_screening_3y');
+  const screeningRelevant = byAge || byGap;
+  const screeningWhy = byAge && byGap ? 'both' : byAge ? 'age' : 'screening';
 
   return (
     <>
@@ -124,6 +128,9 @@ export default function Plan({ lang, setLang, draft, onRestart, go, reach }) {
               <section className="card">
                 <h3>{S.g_screening}</h3>
                 <p className="muted">{S.g_screeningBody}</p>
+                <p className="small" style={{ color: 'var(--teal)', fontWeight: 600 }}>
+                  {S.g_screeningWhy[screeningWhy]}
+                </p>
                 <a
                   className="btn btn--teal"
                   href={MYSEJAHTERA}

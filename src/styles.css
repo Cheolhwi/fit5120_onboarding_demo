@@ -109,7 +109,7 @@ legend { font-weight: 700; font-size: 17px; padding: 0; }
 .tag--req { color: var(--red); background: var(--red-bg); }
 .tag--opt { color: var(--muted); background: #eaeef0; }
 
-.bandgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.bandgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .band {
   min-height: var(--tap); border: 1px solid var(--line); background: var(--surface);
   border-radius: 10px; font: inherit; font-size: 16px; cursor: pointer; color: var(--ink);

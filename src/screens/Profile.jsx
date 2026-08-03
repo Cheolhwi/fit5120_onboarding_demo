@@ -71,9 +71,12 @@ export default function Profile({ lang, setLang, draft, setDraft, onContinue, pu
               </button>
             ))}
           </div>
-          {/* F04 — the mapping is disclosed, never hidden */}
-          {draft.ageBand && publishedBand && (
-            <p className="muted small" style={{ marginTop: 10 }}>
+          {/* F04 — say whose bands these are, and disclose any re-bucketing.
+              The bands offered are DOSM's own, so the second line normally
+              stays hidden; it appears only if the published bands change. */}
+          <p className="muted small" style={{ marginTop: 10 }}>{S.p_official}</p>
+          {draft.ageBand && publishedBand && draft.ageBand !== publishedBand && (
+            <p className="muted small">
               {S.p_closest} <b>{publishedBand}</b>
             </p>
           )}

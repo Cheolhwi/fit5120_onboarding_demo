@@ -65,8 +65,7 @@ export default function Plan({ lang, setLang, draft, onRestart, go, reach }) {
 
   const screeningRelevant =
     draft.lifestyle.includes('no_screening_3y') ||
-    draft.ageBand === '40-49' ||
-    draft.ageBand === '50-59' ||
+    draft.ageBand === '41-59' ||
     draft.ageBand === '60+';
 
   return (

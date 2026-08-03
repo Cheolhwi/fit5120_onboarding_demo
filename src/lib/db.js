@@ -17,16 +17,37 @@ const CONSENT_VERSION = '2026-08-v1';
 
 let tablesDB = null;
 let account = null;
+let configError = null;
 
 if (!MOCK) {
-  const client = new Client()
-    .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT)
-    .setProject(import.meta.env.VITE_APPWRITE_PROJECT);
-  tablesDB = new TablesDB(client);
-  account = new Account(client);
+  const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT;
+  const project = import.meta.env.VITE_APPWRITE_PROJECT;
+
+  // Never throw at module load — that kills the bundle and produces a blank
+  // page with no explanation. Record the problem and let the UI report it.
+  const missing = [
+    !endpoint && 'VITE_APPWRITE_ENDPOINT',
+    !project && 'VITE_APPWRITE_PROJECT',
+  ].filter(Boolean);
+
+  if (missing.length) {
+    configError =
+      `Missing build-time configuration: ${missing.join(', ')}. ` +
+      'These are baked in when the bundle is built, so set them as GitHub ' +
+      'Actions repository variables and re-run the build job (not just deploy).';
+  } else {
+    try {
+      const client = new Client().setEndpoint(endpoint).setProject(project);
+      tablesDB = new TablesDB(client);
+      account = new Account(client);
+    } catch (err) {
+      configError = `Appwrite client could not be created: ${err.message}`;
+    }
+  }
 }
 
 export const isMock = () => MOCK;
+export const getConfigError = () => configError;
 
 /* ------------------------------------------------------------------ public reads */
 

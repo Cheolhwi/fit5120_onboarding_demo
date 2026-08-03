@@ -18,6 +18,8 @@ const S = {
     p_title: 'Tell us a little',
     p_sub: 'We use this only to find the closest official age group. No name, no IC number.',
     p_ageBand: 'Age band',
+    p_official:
+      'These are the age groups DOSM publishes. We never ask for your exact age or date of birth.',
     p_closest: 'Closest official DOSM band:',
     p_sexState: 'Sex and state',
     p_sex: 'Sex',
@@ -109,6 +111,8 @@ const S = {
     p_title: 'Ceritakan sedikit tentang anda',
     p_sub: 'Ini hanya untuk mencari kumpulan umur rasmi yang terdekat. Tiada nama, tiada nombor IC.',
     p_ageBand: 'Kumpulan umur',
+    p_official:
+      'Ini kumpulan umur yang diterbitkan oleh DOSM. Kami tidak meminta umur tepat atau tarikh lahir anda.',
     p_closest: 'Kumpulan rasmi DOSM terdekat:',
     p_sexState: 'Jantina dan negeri',
     p_sex: 'Jantina',

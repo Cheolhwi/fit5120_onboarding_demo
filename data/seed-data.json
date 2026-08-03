@@ -2,10 +2,16 @@
   "_note": [
     "Single source of truth for scripts/seed.mjs AND for VITE_MOCK mode.",
     "Every row that appears in the product must carry a source_id that exists in source_registry.",
-    "mortality_context currently holds ONE verified row. Completing the top-5 requires the team to",
-    "extract the remaining causes from the DOSM release (R1) and set verified=true only after checking."
+    "Figures verified against the DOSM release page on 3 August 2026."
   ],
-
+  "_data_gaps": {
+    "mortality_context_ranks_2_to_5": {
+      "what_is_missing": "Causes ranked 2nd-5th within the 41-59 age band.",
+      "why": "The DOSM release summary publishes only the PRINCIPAL cause for each age band (0-14, 15-40, 41-59, 60+). The full age x cause cross-tabulation is not in the public overview.",
+      "how_to_obtain": "Request the age x cause table via DOSM eStatistik (data[at]dosm.gov.my), or extract it from the full publication PDF if the team can access the detailed tables.",
+      "do_not": "Do not populate these rows by inference from the national all-ages ranking. The national order (pneumonia 2nd, diabetes 3rd) does NOT necessarily hold within 41-59, and the product must not present an unverified ordering as official."
+    }
+  },
   "source_registry": [
     {
       "$id": "R1",
@@ -15,30 +21,30 @@
       "licence": "Public reference — store derived facts with attribution; do not mirror the report",
       "publication_date": "2025-01-01T00:00:00.000Z",
       "retrieved_at": "2026-08-02T00:00:00.000Z",
-      "caveat_en": "Only 67.3% of total deaths in 2024 were medically certified.",
-      "caveat_ms": "Hanya 67.3% daripada jumlah kematian pada 2024 disahkan secara perubatan."
+      "caveat_en": "Of 198,992 deaths registered in 2024, 133,844 (67.3%) were medically certified. These figures describe certified deaths only.",
+      "caveat_ms": "Daripada 198,992 kematian yang didaftarkan pada 2024, 133,844 (67.3%) disahkan secara perubatan. Angka ini merujuk kematian yang disahkan sahaja."
     },
     {
       "$id": "R2",
       "owner": "Institute for Public Health, Ministry of Health Malaysia",
       "title": "NHMS 2023 Fact Sheet: Non-Communicable Diseases and Healthcare Demand",
-      "canonical_url": "https://iku.moh.gov.my/images/nhms2023/fact-sheet-nhms-2023.pdf",
+      "canonical_url": "https://iku.nih.gov.my/images/nhms2023/fact-sheet-nhms-2023.pdf",
       "licence": "Public official PDF — reference only",
       "publication_date": "2023-01-01T00:00:00.000Z",
       "retrieved_at": "2026-08-02T00:00:00.000Z",
-      "caveat_en": "Self-reported and measured prevalence among Malaysian adults; not specific to your age band.",
-      "caveat_ms": "Prevalens dalam kalangan dewasa di Malaysia; bukan khusus untuk kumpulan umur anda."
+      "caveat_en": "Prevalence among Malaysian adults (18 years and over), nationally representative, n=13,616. Not specific to any age band.",
+      "caveat_ms": "Prevalens dalam kalangan dewasa Malaysia (18 tahun ke atas), mewakili negara, n=13,616. Bukan khusus untuk mana-mana kumpulan umur."
     },
     {
       "$id": "R3",
       "owner": "Institute for Public Health, Ministry of Health Malaysia",
       "title": "NHMS 2019 Fact Sheet: NCDs, healthcare demand and health literacy",
-      "canonical_url": "https://iku.moh.gov.my/images/IKU/Document/REPORT/NHMS2019/Fact_Sheet_NHMS_2019-English.pdf",
+      "canonical_url": "https://iku.nih.gov.my/images/IKU/Document/REPORT/NHMS2019/Fact_Sheet_NHMS_2019-English.pdf",
       "licence": "Public official PDF — reference only",
       "publication_date": "2019-01-01T00:00:00.000Z",
       "retrieved_at": "2026-08-02T00:00:00.000Z",
-      "caveat_en": "35.1% of adults had low overall health literacy.",
-      "caveat_ms": "35.1% dewasa mempunyai literasi kesihatan yang rendah."
+      "caveat_en": "35.1% of adults have low health literacy; 32.3% have low health literacy related to disease prevention activities.",
+      "caveat_ms": "35.1% dewasa mempunyai literasi kesihatan yang rendah; 32.3% rendah dalam aktiviti pencegahan penyakit."
     },
     {
       "$id": "R4",
@@ -85,13 +91,40 @@
       "caveat_ms": "Terdapat kaveat pembundaran dan kegranularan sejarah."
     }
   ],
-
   "population_context": [
-    { "$id": "band_30_40", "source_id": "R10", "year": 2024, "age_band": "30-40", "sex": "all", "population_thousands": null, "is_published_band": true },
-    { "$id": "band_41_59", "source_id": "R10", "year": 2024, "age_band": "41-59", "sex": "all", "population_thousands": null, "is_published_band": true },
-    { "$id": "band_60_plus", "source_id": "R10", "year": 2024, "age_band": "60+", "sex": "all", "population_thousands": null, "is_published_band": true }
+    {
+      "$id": "band_0_14",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "0-14",
+      "sex": "all",
+      "is_published_band": true
+    },
+    {
+      "$id": "band_15_40",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "15-40",
+      "sex": "all",
+      "is_published_band": true
+    },
+    {
+      "$id": "band_41_59",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "41-59",
+      "sex": "all",
+      "is_published_band": true
+    },
+    {
+      "$id": "band_60_plus",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "60+",
+      "sex": "all",
+      "is_published_band": true
+    }
   ],
-
   "mortality_context": [
     {
       "$id": "mc_41_59_2024_ihd",
@@ -108,16 +141,170 @@
       "denominator_note_en": "Share of medically certified deaths for ages 41–59 in Malaysia, 2024.",
       "denominator_note_ms": "Peratusan kematian yang disahkan secara perubatan bagi umur 41–59 di Malaysia, 2024.",
       "verified": true
+    },
+    {
+      "$id": "mc_15_40_2024_transport",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "15-40",
+      "sex_scope": "all",
+      "cause_en": "Transport accidents",
+      "cause_ms": "Kemalangan pengangkutan",
+      "count": 2547,
+      "share_pct": 20.0,
+      "rank": 1,
+      "topic": "injury",
+      "denominator_note_en": "Share of medically certified deaths for ages 15–40 in Malaysia, 2024.",
+      "denominator_note_ms": "Peratusan kematian yang disahkan secara perubatan bagi umur 15–40 di Malaysia, 2024.",
+      "verified": true
+    },
+    {
+      "$id": "mc_60plus_2024_pneumonia",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "60+",
+      "sex_scope": "all",
+      "cause_en": "Pneumonia",
+      "cause_ms": "Radang paru-paru",
+      "count": 11989,
+      "share_pct": 13.9,
+      "rank": 1,
+      "topic": "respiratory",
+      "denominator_note_en": "Share of medically certified deaths for ages 60 and over in Malaysia, 2024.",
+      "denominator_note_ms": "Peratusan kematian yang disahkan secara perubatan bagi umur 60 tahun ke atas di Malaysia, 2024.",
+      "verified": true
+    },
+    {
+      "$id": "mc_0_14_2024_pneumonia",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "0-14",
+      "sex_scope": "all",
+      "cause_en": "Pneumonia",
+      "cause_ms": "Radang paru-paru",
+      "count": 244,
+      "share_pct": 5.6,
+      "rank": 1,
+      "topic": "respiratory",
+      "denominator_note_en": "Share of medically certified deaths for ages 0–14 in Malaysia, 2024.",
+      "denominator_note_ms": "Peratusan kematian yang disahkan secara perubatan bagi umur 0–14 di Malaysia, 2024.",
+      "verified": true
+    },
+    {
+      "$id": "mc_all_2024_ihd",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "all",
+      "sex_scope": "all",
+      "cause_en": "Ischaemic heart disease",
+      "cause_ms": "Penyakit jantung iskemia",
+      "count": 17421,
+      "share_pct": 13.0,
+      "rank": 1,
+      "topic": "cardiovascular",
+      "denominator_note_en": "Share of all medically certified deaths in Malaysia, 2024 (all ages).",
+      "denominator_note_ms": "Peratusan semua kematian yang disahkan secara perubatan di Malaysia, 2024 (semua umur).",
+      "verified": true
+    },
+    {
+      "$id": "mc_all_2024_pneumonia",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "all",
+      "sex_scope": "all",
+      "cause_en": "Pneumonia",
+      "cause_ms": "Radang paru-paru",
+      "count": 15332,
+      "share_pct": 11.5,
+      "rank": 2,
+      "topic": "respiratory",
+      "denominator_note_en": "Share of all medically certified deaths in Malaysia, 2024 (all ages).",
+      "denominator_note_ms": "Peratusan semua kematian yang disahkan secara perubatan di Malaysia, 2024 (semua umur).",
+      "verified": true
+    },
+    {
+      "$id": "mc_all_2024_diabetes",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "all",
+      "sex_scope": "all",
+      "cause_en": "Diabetes mellitus",
+      "cause_ms": "Diabetes mellitus",
+      "count": 6929,
+      "share_pct": 5.2,
+      "rank": 3,
+      "topic": "diet",
+      "denominator_note_en": "Share of all medically certified deaths in Malaysia, 2024 (all ages).",
+      "denominator_note_ms": "Peratusan semua kematian yang disahkan secara perubatan di Malaysia, 2024 (semua umur).",
+      "verified": true
+    },
+    {
+      "$id": "mc_all_2024_transport",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "all",
+      "sex_scope": "all",
+      "cause_en": "Transport accidents",
+      "cause_ms": "Kemalangan pengangkutan",
+      "count": 4428,
+      "share_pct": 3.3,
+      "rank": 4,
+      "topic": "injury",
+      "denominator_note_en": "Share of all medically certified deaths in Malaysia, 2024 (all ages).",
+      "denominator_note_ms": "Peratusan semua kematian yang disahkan secara perubatan di Malaysia, 2024 (semua umur).",
+      "verified": true
     }
   ],
-
   "factor_prevalence": [
-    { "$id": "fp_chol", "source_id": "R2", "year": 2023, "scope": "Malaysian adults", "label_en": "High cholesterol", "label_ms": "Kolesterol tinggi", "pct": 33.3, "topic": "cardiovascular", "rank": 1, "verified": true },
-    { "$id": "fp_inactive", "source_id": "R2", "year": 2023, "scope": "Malaysian adults", "label_en": "Physical inactivity", "label_ms": "Kurang aktiviti fizikal", "pct": 29.9, "topic": "activity", "rank": 2, "verified": true },
-    { "$id": "fp_htn", "source_id": "R2", "year": 2023, "scope": "Malaysian adults", "label_en": "Hypertension", "label_ms": "Tekanan darah tinggi", "pct": 29.2, "topic": "cardiovascular", "rank": 3, "verified": true },
-    { "$id": "fp_dm", "source_id": "R2", "year": 2023, "scope": "Malaysian adults", "label_en": "Diabetes", "label_ms": "Diabetes", "pct": 15.6, "topic": "diet", "rank": 4, "verified": true }
+    {
+      "$id": "fp_chol",
+      "source_id": "R2",
+      "year": 2023,
+      "scope": "Malaysian adults 18+",
+      "label_en": "High cholesterol",
+      "label_ms": "Kolesterol tinggi",
+      "pct": 33.3,
+      "topic": "cardiovascular",
+      "rank": 1,
+      "verified": true
+    },
+    {
+      "$id": "fp_inactive",
+      "source_id": "R2",
+      "year": 2023,
+      "scope": "Malaysian adults 18+",
+      "label_en": "Physical inactivity",
+      "label_ms": "Kurang aktiviti fizikal",
+      "pct": 29.9,
+      "topic": "activity",
+      "rank": 2,
+      "verified": true
+    },
+    {
+      "$id": "fp_htn",
+      "source_id": "R2",
+      "year": 2023,
+      "scope": "Malaysian adults 18+",
+      "label_en": "Hypertension",
+      "label_ms": "Tekanan darah tinggi",
+      "pct": 29.2,
+      "topic": "cardiovascular",
+      "rank": 3,
+      "verified": true
+    },
+    {
+      "$id": "fp_dm",
+      "source_id": "R2",
+      "year": 2023,
+      "scope": "Malaysian adults 18+",
+      "label_en": "Diabetes",
+      "label_ms": "Diabetes",
+      "pct": 15.6,
+      "topic": "diet",
+      "rank": 4,
+      "verified": true
+    }
   ],
-
   "action_content": [
     {
       "$id": "act_walk_en",
@@ -125,7 +312,7 @@
       "topic": "activity",
       "language": "en",
       "title": "Walk 30 minutes, 5 days a week",
-      "reason": "WHO advises at least 150 minutes of moderate activity a week for adults.",
+      "reason": "WHO advises adults aged 18–64 to do 150–300 minutes of moderate-intensity activity across the week. Five 30-minute walks is the lower end of that range.",
       "first_step": "Two 15-minute walks after work count as one session.",
       "safety_note": "Start at a level that is safe for you. Ask a clinician first if you have symptoms or a diagnosed condition.",
       "effort": "low",
@@ -139,7 +326,7 @@
       "topic": "activity",
       "language": "ms",
       "title": "Berjalan 30 minit, 5 hari seminggu",
-      "reason": "WHO menyarankan sekurang-kurangnya 150 minit aktiviti sederhana seminggu untuk dewasa.",
+      "reason": "WHO menyarankan dewasa berumur 18–64 melakukan 150–300 minit aktiviti sederhana seminggu. Lima sesi berjalan 30 minit ialah paras minimum julat itu.",
       "first_step": "Dua sesi berjalan 15 minit selepas kerja dikira sebagai satu sesi.",
       "safety_note": "Mulakan pada tahap yang selamat untuk anda. Rujuk doktor dahulu jika ada simptom atau penyakit yang didiagnos.",
       "effort": "low",
@@ -181,7 +368,7 @@
       "topic": "screening",
       "language": "en",
       "title": "Book a health screening",
-      "reason": "MySejahtera gives special focus to adults aged 40 and above.",
+      "reason": "MySejahtera's screening drive targets people aged 40 and above who have not had a health screening in the last 3 years.",
       "first_step": "Check what your nearest Klinik Kesihatan offers.",
       "safety_note": "Eligibility and tests are decided by the health service, not by this app.",
       "effort": "medium",
@@ -195,7 +382,7 @@
       "topic": "screening",
       "language": "ms",
       "title": "Tempah saringan kesihatan",
-      "reason": "MySejahtera memberi tumpuan khas kepada dewasa berumur 40 tahun ke atas.",
+      "reason": "Kempen saringan MySejahtera menyasarkan mereka berumur 40 tahun ke atas yang tidak membuat saringan kesihatan dalam 3 tahun lepas.",
       "first_step": "Semak perkhidmatan di Klinik Kesihatan berdekatan anda.",
       "safety_note": "Kelayakan dan ujian ditentukan oleh perkhidmatan kesihatan, bukan aplikasi ini.",
       "effort": "medium",
@@ -203,5 +390,49 @@
       "review_status": "approved",
       "sort_order": 3
     }
-  ]
+  ],
+  "_verification": {
+    "checked_on": "2026-08-03",
+    "method": "Each figure read directly from the publisher's own page or PDF, not from a secondary summary. Nothing is inferred, rounded or carried over unchecked.",
+    "mortality_context": {
+      "source": "R1 — DOSM release page, quoted verbatim",
+      "url": "https://www.dosm.gov.my/portal-main/release-content/statistics-on-causes-of-death-malaysia-2025",
+      "denominator": "All shares are of MEDICALLY CERTIFIED deaths (133,844 of 198,992 registered deaths in 2024).",
+      "consistency_check": "Implied band totals from the four published age-band shares sum to ~133,912 against the stated 133,844 certified deaths — a 0.05% gap explained by the published percentages being rounded to one decimal."
+    },
+    "factor_prevalence": {
+      "source": "R2 — NHMS 2023 Fact Sheet PDF, read directly",
+      "url": "https://iku.nih.gov.my/images/nhms2023/fact-sheet-nhms-2023.pdf",
+      "quotes": {
+        "hypercholesterolaemia": "Prevalence of hypercholesterolaemia among adults — Overall: 33.3%",
+        "physical_inactivity": "Physically inactive: 29.9%",
+        "hypertension": "Prevalence of hypertension among adults — Overall: 29.2%",
+        "diabetes": "Prevalence of diabetes among adults — Overall: 15.6%"
+      }
+    },
+    "plain_language_labels": {
+      "why": "Labels are deliberately plain (feature F06/F17 — 35.1% of adults have low health literacy). This maps each label back to the term used by the source.",
+      "High cholesterol": "hypercholesterolaemia (NHMS 2023)",
+      "Physical inactivity": "physically inactive (NHMS 2023)",
+      "Hypertension": "hypertension (NHMS 2023)",
+      "Diabetes": "diabetes (NHMS 2023)"
+    },
+    "population_context_note": "These rows record WHICH age bands the DOSM mortality release publishes, so they are attributed to R1. The DMP intends this table to also hold population denominators from OpenDOSM (R10); those have not been extracted yet, so population_thousands is absent.",
+    "action_content": {
+      "walk_30": {
+        "source": "R6 — WHO Europe physical activity fact sheet, read directly",
+        "quote": "Adults should do at least 150–300 minutes of moderate-intensity aerobic physical activity ... throughout the week",
+        "note": "WHO states the recommendation for adults aged 18–64; our audience (40–60) sits inside that range. 5 x 30 min = 150 min, the lower bound."
+      },
+      "less_sugar": {
+        "source": "R2 — NHMS 2023 diabetes prevalence 15.6%",
+        "status": "verified"
+      },
+      "screening": {
+        "source": "R4 — MySejahtera Health Screening page, read directly",
+        "quote": "Target 1.5 Million individuals to be screened within 6 months. Especially those: Aged 40 years and above ... Do not undergo any health screening in the last 3 years",
+        "note": "This is why screen 1 collects the 'no screening in 3 years' flag — it mirrors the published eligibility focus."
+      }
+    }
+  }
 }

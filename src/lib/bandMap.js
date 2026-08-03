@@ -1,13 +1,17 @@
 /**
- * Age-band mapping (feature F04).
+ * Age bands (feature F04).
  *
- * DOSM does not publish a 40–60 band. A user who picks "40–49" must be shown
- * the closest band that actually exists in the source, and must be told that
- * this mapping happened. Never imply exact-age precision.
+ * The bands offered on screen 1 ARE the bands DOSM publishes, so a user is
+ * never silently re-bucketed into a group they did not choose. The mapper is
+ * kept because population_context remains the source of truth: if the
+ * published bands ever change, the app must follow the data rather than a
+ * hardcoded list, and must say so when the two differ.
+ *
+ * 0–14 is published but not offered — this is an adult preventive-health tool.
  */
 
 /** The bands we offer on screen 1. Deliberately coarse — no date of birth. */
-export const USER_BANDS = ['30-39', '40-49', '50-59', '60+'];
+export const USER_BANDS = ['15-40', '41-59', '60+'];
 
 /**
  * Pick the published band that best covers a user band.
@@ -46,5 +50,5 @@ function parseBand(band) {
 
 /** Is this user inside the 40–60 audience the product was designed for? */
 export function isTargetAudience(userBand) {
-  return userBand === '40-49' || userBand === '50-59';
+  return userBand === '41-59';
 }

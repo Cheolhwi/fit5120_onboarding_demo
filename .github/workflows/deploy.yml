@@ -27,6 +27,23 @@ jobs:
 
       - run: npm ci
 
+      # Fail here rather than shipping a bundle with undefined config, which
+      # used to surface as a blank page with no error.
+      # These must be REPOSITORY variables (Settings > Secrets and variables >
+      # Actions > Variables). Environment-scoped variables are not visible to
+      # this job, because it declares no `environment:`.
+      - name: Check required variables
+        run: |
+          missing=0
+          for v in VITE_APPWRITE_ENDPOINT VITE_APPWRITE_PROJECT; do
+            if [ -z "${!v}" ]; then echo "::error::Repository variable $v is not set"; missing=1; fi
+          done
+          [ "$missing" = "0" ] || exit 1
+          echo "endpoint=$VITE_APPWRITE_ENDPOINT  project=$VITE_APPWRITE_PROJECT"
+        env:
+          VITE_APPWRITE_ENDPOINT: ${{ vars.VITE_APPWRITE_ENDPOINT }}
+          VITE_APPWRITE_PROJECT: ${{ vars.VITE_APPWRITE_PROJECT }}
+
       # A project site lives at /<repo>/ , not at the domain root.
       # Without this the bundle 404s in production but works locally.
       - name: Build

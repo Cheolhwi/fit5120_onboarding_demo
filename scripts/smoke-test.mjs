@@ -73,7 +73,8 @@ async function main() {
   console.log('\nSCREEN 1 — context profile');
   check('boot', 'App mounts', doc.querySelector('.appbar') !== null);
   check('F17', 'BM/EN toggle present', doc.querySelectorAll('.langtoggle button').length === 2);
-  check('F01', 'Four age bands offered', doc.querySelectorAll('.band').length === 4);
+  check('F01', 'Age bands offered are DOSM\'s own', doc.querySelectorAll('.band').length === 3,
+    [...doc.querySelectorAll('.band')].map((b) => b.textContent.trim()).join(' / '));
   check('F02', 'Lifestyle checklist rendered', doc.querySelectorAll('.check input').length === 4);
   check('F03', 'Consent checkbox present', doc.querySelector('.consent input') !== null);
   check(
@@ -88,10 +89,17 @@ async function main() {
   check('F03', 'Blocks continue without age band + consent', doc.querySelector('.error') !== null);
 
   // Fill it in.
-  const band4049 = [...doc.querySelectorAll('.band')].find((b) => b.textContent.trim() === '40-49');
-  await click(band4049);
-  check('F04', 'Discloses the published band mapping', text().includes('41-59'),
-    'shows "Closest official DOSM band: 41-59"');
+  const band = [...doc.querySelectorAll('.band')].find((b) => b.textContent.trim() === '41-59');
+  await click(band);
+  check('F04', 'States that the bands are DOSM\'s published groups',
+    text().includes('age groups DOSM publishes'));
+  // Structural, not textual: the page *says* "we never ask for your date of
+  // birth", so searching for that phrase would always match. Check that no
+  // control capable of capturing an exact age exists.
+  check('F01', 'No control captures an exact age',
+    doc.querySelectorAll('input[type="date"], input[type="number"]').length === 0);
+  check('F01', 'Minimum-data promise is shown to the user',
+    /date of birth/i.test(text()));
 
   await setChecked(doc.querySelectorAll('.check input')[2], true);   // no screening 3y
   await setChecked(doc.querySelector('.consent input'), true);
@@ -104,7 +112,7 @@ async function main() {
   check('F08', 'No personal risk percentage claimed', text().includes('No personal risk percentage'));
   check('F05', 'Leading cause from the database', text().includes('Ischaemic heart disease'));
   check('F05', 'Verified DOSM figures rendered', text().includes('5,380') && text().includes('17.6%'));
-  check('F04', 'Mapping explained on screen', text().includes('40-49') && text().includes('41-59'));
+  check('F04', 'Header names the official band being shown', text().includes('41-59'));
   check('F07', 'Source label with owner + licence', text().includes('Department of Statistics Malaysia'));
   check('F07', 'Caveat shown beside the figure', text().includes('67.3%'));
   check('F06', '"What this means" panel', text().includes('What this means for you'));
@@ -119,7 +127,10 @@ async function main() {
   check('F09', 'Two or three sourced actions offered', radios.length >= 2 && radios.length <= 3,
     `${radios.length} actions`);
   check('F09', 'First step given for each action', (text().match(/First step:/g) || []).length === radios.length);
-  check('F10', 'WHO guidance named on the activity action', text().includes('WHO advises at least 150 minutes'));
+  // Matches the WHO fact sheet wording: "at least 150–300 minutes of
+  // moderate-intensity aerobic physical activity ... throughout the week".
+  check('F10', 'WHO guidance quoted accurately on the activity action',
+    /WHO/.test(text()) && /150[–-]300 minutes/.test(text()));
   check('F11', 'Safety note on every action',
     (text().match(/Safety note:/g) || []).length === radios.length);
   check('F11', 'Urgent-symptom route always visible', text().includes('Chest pain, breathlessness or fainting'));

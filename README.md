@@ -162,15 +162,36 @@ defensible; leaving the documentation and the schema disagreeing is not.
 
 ### Data completeness
 
-`mortality_context` currently holds **one verified row**: ischaemic heart
-disease, ages 41–59, 2024, 5,380 deaths, 17.6% (DOSM, R1). Every row carries a
-`verified` boolean and the client filters on it, so unverified rows never reach
-a user.
+`mortality_context` holds **eight verified rows**, all from the DOSM release
+page (R1), checked 3 August 2026:
 
-Completing the top-5 causes requires extracting them from the DOSM release and
-setting `verified: true` only after a human has checked each figure. Do not
-place unchecked numbers in the seed file — screen 2 will simply show fewer
-causes, which is the correct failure mode.
+| Age band | Principal cause | Deaths | Share |
+|---|---|---|---|
+| 0–14 | Pneumonia | 244 | 5.6% |
+| 15–40 | Transport accidents | 2,547 | 20.0% |
+| 41–59 | Ischaemic heart disease | 5,380 | 17.6% |
+| 60+ | Pneumonia | 11,989 | 13.9% |
+| all ages | Ischaemic heart disease · Pneumonia · Diabetes · Transport accidents | 17,421 / 15,332 / 6,929 / 4,428 | 13.0 / 11.5 / 5.2 / 3.3% |
+
+Every row carries a `verified` boolean and the client filters on it, so
+unverified rows never reach a user.
+
+**Still missing: causes ranked 2nd–5th within 41–59.** The DOSM release summary
+publishes only the *principal* cause per age band; the full age × cause
+cross-tabulation is not in the public overview. Request it via DOSM eStatistik
+(`data[at]dosm.gov.my`) or extract it from the detailed publication tables.
+
+Do **not** infer that ordering from the national all-ages ranking. Pneumonia is
+2nd nationally across all ages, but that is dominated by the 60+ band and does
+not establish its rank within 41–59. `data/seed-data.json` carries a
+`_data_gaps` block stating this.
+
+### Seeding is declarative
+
+`db:seed` upserts every row in `seed-data.json` **and deletes published rows
+that are no longer in it**. The JSON is the curated release: what is not in it
+is not live. Only the five public content tables are pruned — `user_profile`,
+`user_goal` and `audit_event` are never touched by the seed script.
 
 ---
 

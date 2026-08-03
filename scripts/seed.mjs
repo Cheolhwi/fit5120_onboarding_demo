@@ -81,6 +81,23 @@ async function upsert(tableId, row) {
   }
 }
 
+/**
+ * Delete published rows that are no longer in seed-data.json.
+ *
+ * seed-data.json is the curated release: what is not in it must not be live.
+ * Without this, a renamed or retired row lingers in the database and can still
+ * be served to users. Only the public content tables are pruned — user rows are
+ * never touched by this script.
+ */
+async function prune(tableId, keepIds) {
+  const res = await tablesDB.listRows({ databaseId: DB_ID, tableId, queries: [] });
+  const stale = res.rows.filter((r) => !keepIds.has(r.$id));
+  for (const row of stale) {
+    await tablesDB.deleteRow({ databaseId: DB_ID, tableId, rowId: row.$id });
+  }
+  return stale.map((r) => r.$id);
+}
+
 async function main() {
   console.log(`Seeding ${DB_ID} at ${APPWRITE_ENDPOINT}\n`);
   checkSources();
@@ -94,7 +111,9 @@ async function main() {
       const result = await upsert(tableId, row);
       result === 'created' ? created++ : updated++;
     }
-    console.log(`  ${tableId.padEnd(20)} ${created} created, ${updated} updated`);
+    const removed = await prune(tableId, new Set(rows.map((r) => r.$id)));
+    const tail = removed.length ? `, ${removed.length} removed (${removed.join(', ')})` : '';
+    console.log(`  ${tableId.padEnd(20)} ${created} created, ${updated} updated${tail}`);
   }
 
   console.log('\nSeed complete.');

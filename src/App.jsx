@@ -3,7 +3,7 @@ import Profile from './screens/Profile.jsx';
 import Insight from './screens/Insight.jsx';
 import Actions from './screens/Actions.jsx';
 import Plan from './screens/Plan.jsx';
-import { getPublishedBands, saveProfile, saveGoal, isMock } from './lib/db.js';
+import { getPublishedBands, saveProfile, saveGoal, isMock, getConfigError } from './lib/db.js';
 import { mapToPublishedBand } from './lib/bandMap.js';
 
 const EMPTY_DRAFT = {
@@ -80,6 +80,25 @@ export default function App() {
   };
 
   const shared = { lang, setLang, go, reach };
+
+  // A misconfigured build used to produce a silent blank page. Say what is wrong.
+  const configError = getConfigError();
+  if (configError) {
+    return (
+      <div className="app">
+        <header className="appbar">
+          <h1>Configuration problem</h1>
+        </header>
+        <main className="screen">
+          <div className="error" role="alert">{configError}</div>
+          <p className="muted">
+            The interface cannot start without an Appwrite endpoint and project ID.
+            Nothing is wrong with your device — this is a deployment setting.
+          </p>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app">

@@ -1,0 +1,207 @@
+{
+  "_note": [
+    "Single source of truth for scripts/seed.mjs AND for VITE_MOCK mode.",
+    "Every row that appears in the product must carry a source_id that exists in source_registry.",
+    "mortality_context currently holds ONE verified row. Completing the top-5 requires the team to",
+    "extract the remaining causes from the DOSM release (R1) and set verified=true only after checking."
+  ],
+
+  "source_registry": [
+    {
+      "$id": "R1",
+      "owner": "Department of Statistics Malaysia (DOSM)",
+      "title": "Statistics on Causes of Death, Malaysia, 2025 (data refer to 2024)",
+      "canonical_url": "https://www.dosm.gov.my/portal-main/release-content/statistics-on-causes-of-death-malaysia-2025",
+      "licence": "Public reference — store derived facts with attribution; do not mirror the report",
+      "publication_date": "2025-01-01T00:00:00.000Z",
+      "retrieved_at": "2026-08-02T00:00:00.000Z",
+      "caveat_en": "Only 67.3% of total deaths in 2024 were medically certified.",
+      "caveat_ms": "Hanya 67.3% daripada jumlah kematian pada 2024 disahkan secara perubatan."
+    },
+    {
+      "$id": "R2",
+      "owner": "Institute for Public Health, Ministry of Health Malaysia",
+      "title": "NHMS 2023 Fact Sheet: Non-Communicable Diseases and Healthcare Demand",
+      "canonical_url": "https://iku.moh.gov.my/images/nhms2023/fact-sheet-nhms-2023.pdf",
+      "licence": "Public official PDF — reference only",
+      "publication_date": "2023-01-01T00:00:00.000Z",
+      "retrieved_at": "2026-08-02T00:00:00.000Z",
+      "caveat_en": "Self-reported and measured prevalence among Malaysian adults; not specific to your age band.",
+      "caveat_ms": "Prevalens dalam kalangan dewasa di Malaysia; bukan khusus untuk kumpulan umur anda."
+    },
+    {
+      "$id": "R3",
+      "owner": "Institute for Public Health, Ministry of Health Malaysia",
+      "title": "NHMS 2019 Fact Sheet: NCDs, healthcare demand and health literacy",
+      "canonical_url": "https://iku.moh.gov.my/images/IKU/Document/REPORT/NHMS2019/Fact_Sheet_NHMS_2019-English.pdf",
+      "licence": "Public official PDF — reference only",
+      "publication_date": "2019-01-01T00:00:00.000Z",
+      "retrieved_at": "2026-08-02T00:00:00.000Z",
+      "caveat_en": "35.1% of adults had low overall health literacy.",
+      "caveat_ms": "35.1% dewasa mempunyai literasi kesihatan yang rendah."
+    },
+    {
+      "$id": "R4",
+      "owner": "MySejahtera, Ministry of Health Malaysia",
+      "title": "Health Screening: Introduction",
+      "canonical_url": "https://mysejahtera.moh.gov.my/en/health-records-in-mysejahtera/health-screening/introduction",
+      "licence": "Live official guidance — link and attribute",
+      "publication_date": "2024-01-01T00:00:00.000Z",
+      "retrieved_at": "2026-08-02T00:00:00.000Z",
+      "caveat_en": "Eligibility is decided by the health service, not by this application.",
+      "caveat_ms": "Kelayakan ditentukan oleh perkhidmatan kesihatan, bukan oleh aplikasi ini."
+    },
+    {
+      "$id": "R6",
+      "owner": "World Health Organization",
+      "title": "Physical activity recommendations for adults",
+      "canonical_url": "https://www.who.int/europe/news-room/fact-sheets/item/physical-activity",
+      "licence": "Public guidance — link and attribute",
+      "publication_date": "2024-01-01T00:00:00.000Z",
+      "retrieved_at": "2026-08-02T00:00:00.000Z",
+      "caveat_en": "General adult guidance. Start at a level that is safe for you.",
+      "caveat_ms": "Panduan umum untuk dewasa. Mulakan pada tahap yang selamat untuk anda."
+    },
+    {
+      "$id": "R7",
+      "owner": "United Nations",
+      "title": "Sustainable Development Goal 3, including Target 3.4",
+      "canonical_url": "https://sdgs.un.org/goals/goal3",
+      "licence": "Public reference",
+      "publication_date": "2015-09-25T00:00:00.000Z",
+      "retrieved_at": "2026-08-02T00:00:00.000Z",
+      "caveat_en": "Target 3.4 aims to cut premature NCD mortality by one third by 2030.",
+      "caveat_ms": "Sasaran 3.4 mensasarkan pengurangan satu pertiga kematian pramatang akibat NCD menjelang 2030."
+    },
+    {
+      "$id": "R10",
+      "owner": "OpenDOSM",
+      "title": "Population Table: Malaysia — age / sex / ethnicity",
+      "canonical_url": "https://open.dosm.gov.my/data-catalogue/population_malaysia",
+      "licence": "CC BY 4.0",
+      "publication_date": "2026-01-01T00:00:00.000Z",
+      "retrieved_at": "2026-08-02T00:00:00.000Z",
+      "caveat_en": "Rounding and historical granularity caveats apply.",
+      "caveat_ms": "Terdapat kaveat pembundaran dan kegranularan sejarah."
+    }
+  ],
+
+  "population_context": [
+    { "$id": "band_30_40", "source_id": "R10", "year": 2024, "age_band": "30-40", "sex": "all", "population_thousands": null, "is_published_band": true },
+    { "$id": "band_41_59", "source_id": "R10", "year": 2024, "age_band": "41-59", "sex": "all", "population_thousands": null, "is_published_band": true },
+    { "$id": "band_60_plus", "source_id": "R10", "year": 2024, "age_band": "60+", "sex": "all", "population_thousands": null, "is_published_band": true }
+  ],
+
+  "mortality_context": [
+    {
+      "$id": "mc_41_59_2024_ihd",
+      "source_id": "R1",
+      "year": 2024,
+      "age_band": "41-59",
+      "sex_scope": "all",
+      "cause_en": "Ischaemic heart disease",
+      "cause_ms": "Penyakit jantung iskemia",
+      "count": 5380,
+      "share_pct": 17.6,
+      "rank": 1,
+      "topic": "cardiovascular",
+      "denominator_note_en": "Share of medically certified deaths for ages 41–59 in Malaysia, 2024.",
+      "denominator_note_ms": "Peratusan kematian yang disahkan secara perubatan bagi umur 41–59 di Malaysia, 2024.",
+      "verified": true
+    }
+  ],
+
+  "factor_prevalence": [
+    { "$id": "fp_chol", "source_id": "R2", "year": 2023, "scope": "Malaysian adults", "label_en": "High cholesterol", "label_ms": "Kolesterol tinggi", "pct": 33.3, "topic": "cardiovascular", "rank": 1, "verified": true },
+    { "$id": "fp_inactive", "source_id": "R2", "year": 2023, "scope": "Malaysian adults", "label_en": "Physical inactivity", "label_ms": "Kurang aktiviti fizikal", "pct": 29.9, "topic": "activity", "rank": 2, "verified": true },
+    { "$id": "fp_htn", "source_id": "R2", "year": 2023, "scope": "Malaysian adults", "label_en": "Hypertension", "label_ms": "Tekanan darah tinggi", "pct": 29.2, "topic": "cardiovascular", "rank": 3, "verified": true },
+    { "$id": "fp_dm", "source_id": "R2", "year": 2023, "scope": "Malaysian adults", "label_en": "Diabetes", "label_ms": "Diabetes", "pct": 15.6, "topic": "diet", "rank": 4, "verified": true }
+  ],
+
+  "action_content": [
+    {
+      "$id": "act_walk_en",
+      "action_key": "walk_30",
+      "topic": "activity",
+      "language": "en",
+      "title": "Walk 30 minutes, 5 days a week",
+      "reason": "WHO advises at least 150 minutes of moderate activity a week for adults.",
+      "first_step": "Two 15-minute walks after work count as one session.",
+      "safety_note": "Start at a level that is safe for you. Ask a clinician first if you have symptoms or a diagnosed condition.",
+      "effort": "low",
+      "source_id": "R6",
+      "review_status": "approved",
+      "sort_order": 1
+    },
+    {
+      "$id": "act_walk_ms",
+      "action_key": "walk_30",
+      "topic": "activity",
+      "language": "ms",
+      "title": "Berjalan 30 minit, 5 hari seminggu",
+      "reason": "WHO menyarankan sekurang-kurangnya 150 minit aktiviti sederhana seminggu untuk dewasa.",
+      "first_step": "Dua sesi berjalan 15 minit selepas kerja dikira sebagai satu sesi.",
+      "safety_note": "Mulakan pada tahap yang selamat untuk anda. Rujuk doktor dahulu jika ada simptom atau penyakit yang didiagnos.",
+      "effort": "low",
+      "source_id": "R6",
+      "review_status": "approved",
+      "sort_order": 1
+    },
+    {
+      "$id": "act_sugar_en",
+      "action_key": "less_sugar",
+      "topic": "diet",
+      "language": "en",
+      "title": "Swap one sugary drink for water",
+      "reason": "NHMS 2023 reported 15.6% diabetes prevalence among Malaysian adults.",
+      "first_step": "Keep a water bottle where you work.",
+      "safety_note": "General guidance only. This is not a treatment or a diet prescription.",
+      "effort": "low",
+      "source_id": "R2",
+      "review_status": "approved",
+      "sort_order": 2
+    },
+    {
+      "$id": "act_sugar_ms",
+      "action_key": "less_sugar",
+      "topic": "diet",
+      "language": "ms",
+      "title": "Tukar satu minuman manis kepada air kosong",
+      "reason": "NHMS 2023 melaporkan prevalens diabetes 15.6% dalam kalangan dewasa Malaysia.",
+      "first_step": "Letakkan botol air di tempat kerja anda.",
+      "safety_note": "Panduan umum sahaja. Ini bukan rawatan atau preskripsi diet.",
+      "effort": "low",
+      "source_id": "R2",
+      "review_status": "approved",
+      "sort_order": 2
+    },
+    {
+      "$id": "act_screen_en",
+      "action_key": "screening",
+      "topic": "screening",
+      "language": "en",
+      "title": "Book a health screening",
+      "reason": "MySejahtera gives special focus to adults aged 40 and above.",
+      "first_step": "Check what your nearest Klinik Kesihatan offers.",
+      "safety_note": "Eligibility and tests are decided by the health service, not by this app.",
+      "effort": "medium",
+      "source_id": "R4",
+      "review_status": "approved",
+      "sort_order": 3
+    },
+    {
+      "$id": "act_screen_ms",
+      "action_key": "screening",
+      "topic": "screening",
+      "language": "ms",
+      "title": "Tempah saringan kesihatan",
+      "reason": "MySejahtera memberi tumpuan khas kepada dewasa berumur 40 tahun ke atas.",
+      "first_step": "Semak perkhidmatan di Klinik Kesihatan berdekatan anda.",
+      "safety_note": "Kelayakan dan ujian ditentukan oleh perkhidmatan kesihatan, bukan aplikasi ini.",
+      "effort": "medium",
+      "source_id": "R4",
+      "review_status": "approved",
+      "sort_order": 3
+    }
+  ]
+}

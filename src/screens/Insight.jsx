@@ -59,6 +59,7 @@ export default function Insight({ lang, setLang, textSize, setTextSize, draft, p
               <p className="muted small">{S.i_mapped(draft.ageBand, publishedBand)}</p>
             )}
 
+            <div className="cols">
             {/* F05 — the core insight */}
             {top ? (
               <section className="card">
@@ -99,6 +100,7 @@ export default function Insight({ lang, setLang, textSize, setTextSize, draft, p
                 </div>
               </section>
             )}
+            </div>
 
             {/* F06 — plain-language explanation */}
             {top && (

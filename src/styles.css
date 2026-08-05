@@ -60,7 +60,7 @@ body {
 
 .langtoggle { display: flex; background: rgba(255,255,255,.16); border-radius: 999px; padding: 3px; }
 .langtoggle button {
-  min-height: 34px; min-width: 46px; border: 0; border-radius: 999px; background: transparent;
+  min-height: 44px; min-width: 48px; border: 0; border-radius: 999px; background: transparent;
   color: #fff; font: inherit; font-size: 14px; cursor: pointer; padding: 0 12px;
 }
 .langtoggle button[aria-pressed="true"] { background: #fff; color: var(--teal); font-weight: 700; }
@@ -179,6 +179,12 @@ a { color: var(--teal); }
 }
 
 /* ---------------------------------------------------------------- actions */
+/* Base (mobile) layout. Defining this only inside the desktop media query
+   left every viewport below 900px with an unstyled container and no gaps. */
+.actionlist { display: flex; flex-direction: column; gap: 14px; }
+/* Wrapping two cards in .cols removes them from .screen's gap, so the wrapper
+   has to supply that spacing itself at mobile width. */
+.cols { display: flex; flex-direction: column; gap: 16px; }
 .action { padding: 0; overflow: hidden; }
 .action[data-selected="true"] { border: 2px solid var(--green); }
 .action__body { padding: 16px; display: flex; gap: 12px; align-items: flex-start; }
@@ -271,4 +277,146 @@ a { color: var(--teal); }
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------------------------------------------- AC 2.2.2 weekly target */
+.targetrow { margin-top: 16px; }
+.targetrow__label {
+  display: block; font-size: 12px; font-weight: 700; letter-spacing: .08em;
+  color: #9ec9ce; text-transform: uppercase; margin-bottom: 8px;
+}
+.targetrow__opts { display: flex; gap: 6px; flex-wrap: wrap; }
+.targetopt {
+  min-width: 44px; min-height: 44px; border-radius: 12px; cursor: pointer;
+  border: 1px solid #4e7c88; background: transparent; color: #fff;
+  font: inherit; font-size: 15px;
+}
+.targetopt[aria-pressed="true"] { background: #fff; color: var(--teal); font-weight: 700; border-color: #fff; }
+
+/* AC 2.2.4 — source and safety note carried onto the teal plan card */
+.action__safety--onteal {
+  margin-top: 16px; color: #d8ecee; border-top: 1px solid #4e7c88;
+  border-left: 0; padding: 12px 0 0; background: none;
+}
+.sourcechip--onteal { margin-top: 12px; }
+.sourcechip--onteal .sourcechip { background: rgba(255,255,255,.10); color: #d8ecee; border-color: #4e7c88; }
+.sourcechip--onteal .sourcechip a { color: #fff; }
+.sourcechip--onteal .sourcechip__i { background: #4e7c88; color: #fff; }
+
+.app--lg .targetopt { font-size: 17px; min-width: 48px; min-height: 48px; }
+
+/* ------------------------------------------- one-off task (book screening) */
+.book__h {
+  color: #fff; font-size: 15px; margin: 18px 0 6px;
+  border-top: 1px solid #4e7c88; padding-top: 14px;
+}
+.book__steps { color: #d8ecee; margin: 0; padding-left: 20px; line-height: 1.65; }
+.book__steps li { margin-bottom: 4px; }
+.btn--book {
+  display: grid; place-items: center; text-decoration: none; margin-top: 12px;
+  background: #fff; color: var(--teal); min-height: 48px; font-weight: 700;
+}
+.btn--book2 { background: transparent; color: #fff; border: 1px solid #fff; }
+.book__sub { display: block; font-size: 12px; font-weight: 400; opacity: .8; margin-top: 2px; }
+.book__done {
+  display: flex; gap: 12px; align-items: center; margin-top: 18px; cursor: pointer;
+  background: rgba(255,255,255,.10); border: 1px solid #4e7c88;
+  border-radius: 12px; padding: 14px; color: #fff; min-height: 48px;
+}
+.book__done input { width: 22px; height: 22px; flex: none; }
+
+/* ==========================================================================
+   DESKTOP  (>= 900px)
+   The app is mobile-first and stays that way below this breakpoint. Above it
+   the bottom tab bar becomes a left rail and the content column widens; no
+   content is added, removed or reworded at any width, so the two layouts say
+   exactly the same thing. Nothing here is behind a hover — the whole UI stays
+   usable from a keyboard and on a touchscreen laptop.
+   ========================================================================== */
+@media (min-width: 900px) {
+  body { background: #e9edee; }
+
+  /* DOM order is header, main, nav. Grid areas place the nav first visually
+     without reordering the source, so tab order still follows the reading
+     order and the rail is not a keyboard trap before the content. */
+  .app {
+    max-width: 1180px;
+    display: grid;
+    grid-template-columns: 252px minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      "flag flag"
+      "nav  header"
+      "nav  main";
+    background: var(--page);
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    min-height: 100vh;
+  }
+  .mockflag { grid-area: flag; }
+  .appbar   { grid-area: header; padding: 30px 40px 34px; }
+  .screen   { grid-area: main; padding: 30px 40px 56px; max-width: 900px; }
+  .screen--withnav { padding-bottom: 56px; }
+  .appbar h1 { font-size: 30px; }
+
+  /* ---- left rail ---- */
+  .nav {
+    grid-area: nav;
+    position: sticky; top: 0; align-self: start;
+    transform: none; left: auto; bottom: auto;
+    width: auto; max-width: none; height: 100vh;
+    grid-template-columns: 1fr;
+    grid-auto-rows: max-content;
+    align-content: start;
+    gap: 4px; padding: 26px 14px;
+    border-top: 0; border-right: 1px solid var(--line);
+    counter-reset: navstep;
+  }
+  .nav button {
+    flex-direction: row; justify-content: flex-start; gap: 12px;
+    min-height: 52px; padding: 0 14px; border-radius: 10px;
+    font-size: 15px; text-align: left;
+  }
+  /* Step numbers come from a CSS counter, so the labels themselves are
+     untouched and stay identical in both languages and both layouts. */
+  .nav button::before {
+    counter-increment: navstep;
+    content: counter(navstep);
+    width: 26px; height: 26px; flex: none;
+    display: grid; place-items: center;
+    border-radius: 50%; background: #e3e9ec; color: #7d8d97;
+    font-size: 13px; font-weight: 700;
+  }
+  .nav button[aria-current="page"] { background: var(--blue-bg); }
+  .nav button[aria-current="page"]::before { background: var(--teal); color: #fff; }
+  .nav button:disabled::before { background: #edf1f2; color: #b4c0c7; }
+
+  /* ---- two-column content ---- */
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  .cols > * { margin: 0; }
+  .actionlist { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  .bandgrid { max-width: 420px; }
+  .selectrow { max-width: 420px; }
+  .checklist { display: grid; grid-template-columns: 1fr 1fr; }
+
+  /* A full-bleed primary button is right on a 480px phone column and wrong on
+     an 860px content area — it reads as a banner, not a control. On desktop the
+     step's own button sizes to its label and sits at the start of a footer row,
+     so the eye lands on it after the content rather than being blocked by it.
+     Scoped with > so buttons inside cards (the booking links, goal controls)
+     keep their own sizing. */
+  .screen > .btn {
+    width: auto;
+    align-self: center;
+    min-width: 300px;
+    min-height: 56px;
+    font-size: 18px;
+    padding: 0 44px;
+    margin-top: 22px;
+  }
+}
+
+/* Very wide screens: stop the text lines from growing past a readable measure. */
+@media (min-width: 1400px) {
+  .app { max-width: 1320px; grid-template-columns: 280px minmax(0, 1fr); }
 }

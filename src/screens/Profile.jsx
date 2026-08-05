@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { AppBar } from '../components/common.jsx';
+import { AppBar, NavBar } from '../components/common.jsx';
 import { t } from '../i18n.js';
 import { USER_BANDS } from '../lib/bandMap.js';
 
-const STATES = [
-  'Johor', 'Kedah', 'Kelantan', 'Melaka', 'Negeri Sembilan', 'Pahang',
-  'Perak', 'Perlis', 'Pulau Pinang', 'Sabah', 'Sarawak', 'Selangor',
-  'Terengganu', 'W.P. Kuala Lumpur', 'W.P. Labuan', 'W.P. Putrajaya',
-];
+// AC 1.1.1 — every input has to be justifiable. "State" was removed: it was
+// collected but never read, because DOSM's cause-of-death release we use is
+// national, not by state. Asking for it contradicted the promise on this very
+// screen. If state-level data is licensed later, re-add the field then.
 
 const FLAGS = ['sedentary', 'sugary_drinks', 'no_screening_3y', 'smoker'];
 
@@ -16,7 +15,7 @@ const FLAGS = ['sedentary', 'sugary_drinks', 'no_screening_3y', 'smoker'];
  * Nothing here is written to the database. The profile is held in memory
  * until the user saves a goal on screen 4.
  */
-export default function Profile({ lang, setLang, textSize, setTextSize, draft, setDraft, onContinue, publishedBand }) {
+export default function Profile({ lang, setLang, textSize, setTextSize, draft, setDraft, onContinue, publishedBand, go, reach }) {
   const S = t(lang);
   // One bundle for the app bar so a new control cannot be forgotten at a call site.
   const bar = { lang, setLang, textSize, setTextSize };
@@ -45,7 +44,7 @@ export default function Profile({ lang, setLang, textSize, setTextSize, draft, s
     <>
       <AppBar {...bar} step={S.p_step} title={S.p_title} sub={S.p_sub} />
 
-      <form className="screen" onSubmit={submit} noValidate>
+      <form className="screen screen--withnav" onSubmit={submit} noValidate>
         {errors.length > 0 && (
           <div className="error" role="alert">
             {errors.map((msg) => (
@@ -90,6 +89,7 @@ export default function Profile({ lang, setLang, textSize, setTextSize, draft, s
             <legend>{S.p_sexState}</legend>
             <span className="tag tag--opt">{S.optional}</span>
           </div>
+          <p className="muted small" style={{ marginTop: 0, marginBottom: 10 }}>{S.p_sexWhy}</p>
           <div className="selectrow">
             <label className="field">
               <span>{S.p_sex}</span>
@@ -97,15 +97,6 @@ export default function Profile({ lang, setLang, textSize, setTextSize, draft, s
                 <option value="">{S.p_notSaid}</option>
                 <option value="male">{S.p_male}</option>
                 <option value="female">{S.p_female}</option>
-              </select>
-            </label>
-            <label className="field">
-              <span>{S.p_state}</span>
-              <select value={draft.state} onChange={(e) => set({ state: e.target.value })}>
-                <option value="">{S.p_notSaid}</option>
-                {STATES.map((st) => (
-                  <option key={st} value={st}>{st}</option>
-                ))}
               </select>
             </label>
           </div>
@@ -117,6 +108,7 @@ export default function Profile({ lang, setLang, textSize, setTextSize, draft, s
             <legend>{S.p_lifestyle}</legend>
             <span className="tag tag--opt">{S.optional}</span>
           </div>
+          <p className="muted small" style={{ marginTop: 0, marginBottom: 10 }}>{S.p_lifestyleWhy}</p>
           <div className="checklist">
             {FLAGS.map((flag) => (
               <label key={flag} className="check">
@@ -189,6 +181,8 @@ export default function Profile({ lang, setLang, textSize, setTextSize, draft, s
 
         <button className="btn" type="submit">{S.continue}</button>
       </form>
+
+      <NavBar lang={lang} screen="profile" go={go} reach={reach} />
     </>
   );
 }

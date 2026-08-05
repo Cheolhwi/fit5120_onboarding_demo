@@ -125,6 +125,13 @@ export const FLAG_TO_TOPIC = {
 };
 
 /** Flags the user can tick that currently have no action to offer. */
+// Not every action is a habit. Booking a screening is a single task that is
+// either done or not; rendering it as a weekly counter with day-dots asks the
+// user to tick a box six more times for an appointment they already made.
+// Topic-based rather than key-based so new screening content inherits it.
+export const ONE_OFF_TOPICS = ['screening'];
+export const isOneOff = (topic) => ONE_OFF_TOPICS.includes(topic);
+
 export const FLAGS_WITHOUT_ACTION = ['smoker'];
 
 export const topicsForFlags = (flags = []) =>
@@ -242,7 +249,9 @@ export async function saveProfile(profile) {
     owner_user_id: user.$id,
     age_band: profile.ageBand,
     sex: profile.sex,
-    state: profile.state,
+    // 'state' is intentionally not written. The column still exists in the
+    // schema (DMP 3.3) but the app no longer collects it — the cause-of-death
+    // release we use is national, so it had no consumer. See Profile.jsx.
     screening_band: profile.screeningBand,
     lifestyle_flags: packFlags(profile.lifestyle),
     consent_version: CONSENT_VERSION,

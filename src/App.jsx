@@ -3,36 +3,52 @@ import Profile from './screens/Profile.jsx';
 import Insight from './screens/Insight.jsx';
 import Actions from './screens/Actions.jsx';
 import Plan from './screens/Plan.jsx';
-import { getPublishedBands, saveProfile, saveGoal, isMock, getConfigError } from './lib/db.js';
+import { getPublishedBands, saveProfile, saveGoal, isMock, getConfigError, isOneOff } from './lib/db.js';
 import { mapToPublishedBand } from './lib/bandMap.js';
+import { LANGS } from './i18n.js';
 
 const EMPTY_DRAFT = {
   ageBand: '',
   sex: '',
-  state: '',
   lifestyle: [],
   consent: false,
 };
 
 const ORDER = ['profile', 'insight', 'actions', 'plan'];
 
+// AC 2.2.2 — a starting value, not a requirement. Derived from the WHO figure
+// the walk_30 action quotes (150 min / 30 min = 5), never from the user.
+const DEFAULT_TARGET = 5;
+
 export default function App() {
-  const [lang, setLang] = useState('en');
-  // AC 1.2.4 — presentation preference, remembered across visits. It changes
-  // nothing about the content, so it is not part of the health profile and is
-  // never written to the database.
-  const [textSize, setTextSize] = useState(
-    () => globalThis.localStorage?.getItem('kirasihat.textSize') || 'normal'
-  );
+  // AC 1.2.4 — presentation preferences, remembered across visits. Neither
+  // changes the meaning of any content, so neither is part of the health
+  // profile and neither is ever written to the database.
+  //
+  // Language is persisted for the same reason text size is: a user who picks
+  // BM and is silently returned to English on refresh has been told their
+  // choice does not stick. Reading it lazily in useState (not in an effect)
+  // means the first paint is already in the chosen language — no flash of
+  // English before it corrects itself.
+  const [lang, setLang] = useState(() => {
+    const saved = globalThis.localStorage?.getItem('kirasihat.lang');
+    return LANGS.includes(saved) ? saved : 'en';
+  });
+  const [textSize, setTextSize] = useState(() => {
+    const saved = globalThis.localStorage?.getItem('kirasihat.textSize');
+    return saved === 'large' || saved === 'normal' ? saved : 'normal';
+  });
   const [screen, setScreen] = useState('profile');
   const [reach, setReach] = useState('profile');       // furthest screen unlocked
   const [draft, setDraft] = useState(EMPTY_DRAFT);     // held in memory only
   const [bands, setBands] = useState([]);
   const [selected, setSelected] = useState('');
+  const [selectedTopic, setSelectedTopic] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     document.documentElement.lang = lang === 'ms' ? 'ms' : 'en';
+    globalThis.localStorage?.setItem('kirasihat.lang', lang);
   }, [lang]);
 
   useEffect(() => {
@@ -67,12 +83,18 @@ export default function App() {
       await saveProfile({
         ageBand: draft.ageBand,
         sex: draft.sex,
-        state: draft.state,
         screeningBand: draft.lifestyle.includes('no_screening_3y') ? 'over_3y' : 'unknown',
         lifestyle: draft.lifestyle,
         language: lang,
       });
-      await saveGoal({ actionKey: selected, target: 5, reminder: false });
+      // AC 2.2.2 — 5 is the default only because the walk_30 action quotes WHO
+      // as 5 x 30 minutes, and the user can change it on the plan screen. A
+      // one-off task is target 1: it is done or it is not.
+      await saveGoal({
+        actionKey: selected,
+        target: isOneOff(selectedTopic) ? 1 : DEFAULT_TARGET,
+        reminder: false,
+      });
       advance('plan');
     } catch (err) {
       console.error(err);
@@ -85,6 +107,7 @@ export default function App() {
   const restart = () => {
     setDraft(EMPTY_DRAFT);
     setSelected('');
+    setSelectedTopic('');
     setReach('profile');
     setScreen('profile');
   };
@@ -144,6 +167,7 @@ export default function App() {
           draft={draft}
           selected={selected}
           setSelected={setSelected}
+          setSelectedTopic={setSelectedTopic}
           onSave={saveGoalAndPlan}
         />
       )}

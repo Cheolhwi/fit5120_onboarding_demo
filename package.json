@@ -11,6 +11,7 @@
     "db:check": "node scripts/check-connection.mjs",
     "db:setup": "node scripts/setup-tables.mjs",
     "db:seed": "node scripts/seed.mjs",
+    "db:drift": "node scripts/check-drift.mjs",
     "db:reset": "node scripts/setup-tables.mjs --drop && node scripts/setup-tables.mjs && node scripts/seed.mjs",
     "build:mock": "vite build --mode mock --outDir dist-mock",
     "test": "npm run build:mock && node scripts/smoke-test.mjs"

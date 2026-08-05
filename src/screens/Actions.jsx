@@ -8,7 +8,7 @@ import { getActions, getSources, topicsForFlags, FLAGS_WITHOUT_ACTION } from '..
  * Single-select. Every option carries source, reason, first step and a
  * safety note; the urgent-symptom route is always visible, never behind a tap.
  */
-export default function Actions({ lang, setLang, textSize, setTextSize, draft, selected, setSelected, onSave, go, reach }) {
+export default function Actions({ lang, setLang, textSize, setTextSize, draft, selected, setSelected, setSelectedTopic, onSave, go, reach }) {
   const S = t(lang);
   // One bundle for the app bar so a new control cannot be forgotten at a call site.
   const bar = { lang, setLang, textSize, setTextSize };
@@ -65,7 +65,7 @@ export default function Actions({ lang, setLang, textSize, setTextSize, draft, s
 
             <fieldset>
               <legend className="sr-only">{S.a_title}</legend>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div className="actionlist">
                 {state.actions.map((a) => (
                   <div
                     key={a.$id}
@@ -78,7 +78,13 @@ export default function Actions({ lang, setLang, textSize, setTextSize, draft, s
                         name="action"
                         value={a.action_key}
                         checked={selected === a.action_key}
-                        onChange={() => { setSelected(a.action_key); setTouched(false); }}
+                        onChange={() => {
+                          setSelected(a.action_key);
+                          // The topic decides whether the plan screen is a
+                          // weekly habit or a single task — see isOneOff.
+                          setSelectedTopic(a.topic);
+                          setTouched(false);
+                        }}
                       />
                       <span>
                         <span className="action__title">{a.title}</span>

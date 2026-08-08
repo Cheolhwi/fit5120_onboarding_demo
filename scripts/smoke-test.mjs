@@ -75,8 +75,49 @@ async function main() {
     await sleep(120);
   };
 
+  console.log('\nSCREEN 0 — welcome');
+  check('boot', 'App mounts', doc.querySelector('.hero') !== null);
+  check('w', 'Welcome is the first screen, not the form',
+    !!doc.querySelector('.hero') && !doc.querySelector('.bandgrid'));
+
+  // The animated figures must be the real published ones. 44,110 is the sum of
+  // the four verified all-ages causes in seed-data.json, all source R1.
+  check('w', 'Counter shows the real DOSM total', text().includes('44,110'),
+    (text().match(/[\d,]{5,}/) || [])[0]);
+  for (const cause of ['Ischaemic heart disease', 'Pneumonia', 'Diabetes mellitus',
+                       'Transport accidents']) {
+    check('w', `Names the published cause: ${cause}`, text().includes(cause));
+  }
+  check('w', 'Shows NHMS changeable factors', text().includes('High cholesterol')
+    && text().includes('33.3%'));
+  check('w', 'Every figure block carries a source',
+    doc.querySelectorAll('.sourcechip').length >= 2,
+    `${doc.querySelectorAll('.sourcechip').length} chips`);
+  check('w', 'States the boundary before the user commits',
+    text().includes('No personal risk score'));
+  check('w', 'Population framing, not personal framing',
+    text().includes('measured across Malaysian adults, not about you'));
+  check('w', 'Four steps of the flow are previewed',
+    doc.querySelectorAll('.steps li').length === 4);
+
+  // Motion has to be optional. Assert the opt-out actually turns the
+  // animations off rather than merely existing.
+  const cssAll = readFileSync(join(DIST, 'assets',
+    readdirSync(join(DIST, 'assets')).find((f) => f.endsWith('.css'))), 'utf8');
+  const rmAt = cssAll.search(/@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+  check('a11y', 'A reduced-motion opt-out is shipped', rmAt !== -1);
+  const rmBlock = rmAt === -1 ? '' : cssAll.slice(rmAt, rmAt + 600);
+  check('a11y', 'The opt-out disables animation, not just declares itself',
+    (rmBlock.match(/animation:\s*none/g) || []).length >= 3,
+    `${(rmBlock.match(/animation:\s*none/g) || []).length} rules`);
+  check('a11y', 'Reduced motion still shows the finished bar width',
+    /width:\s*var\(--w\)/.test(rmBlock));
+
+  await click(byText('Start —'));
+  await sleep(400);
+
   console.log('\nSCREEN 1 — context profile');
-  check('boot', 'App mounts', doc.querySelector('.appbar') !== null);
+  check('boot', 'Start leads into the flow', doc.querySelector('.appbar') !== null);
   // Two toggle groups now: text size (A / A+) and language (BM / EN).
   const toggle = (label) =>
     [...doc.querySelectorAll('.langtoggle button')].find((b) => b.textContent.trim() === label);
@@ -387,16 +428,18 @@ async function main() {
 
   const doc2 = w2.document;
   const text2 = () => doc2.body.textContent.replace(/\s+/g, ' ');
+  // A refresh now lands on screen 0, so assert against the welcome copy — the
+  // profile strings this used to look for are no longer on the first screen.
   check('AC124', 'Bahasa Melayu survives a browser refresh',
-    /Beritahu kami|Pelan saya|Jantina/.test(text2()),
-    text2().slice(0, 40));
+    /Malaysia menerbitkan datanya/.test(text2()) && /Mula —/.test(text2()),
+    doc2.querySelector('.hero__title')?.textContent.trim().slice(0, 44));
   check('AC124', 'html lang is correct on first paint after refresh',
     doc2.documentElement.lang === 'ms');
   check('AC124', 'Larger text also survives a refresh', !!doc2.querySelector('.app--lg'));
   // The health profile is deliberately in-memory only, so a refresh must land
   // back on screen 1. Checked structurally so it holds in either language.
   check('AC124', 'Refresh does not restore the in-memory health profile',
-    !!doc2.querySelector('.bandgrid'));
+    !!doc2.querySelector('.hero') && !doc2.querySelector('.bandgrid'));
 
   // jsdom has no layout engine, so the desktop layout cannot be rendered here.
   // What can be checked is the claim that matters: the wide layout is purely
@@ -425,6 +468,18 @@ async function main() {
     /counter\(navstep\)/.test(wide));
   check('desktop', 'Mobile remains the default, not an override',
     at !== -1 && at > css.search(/\.app\s*\{/));
+
+  // .app becomes a named-area grid above 900px. A direct child with no
+  // grid-area lands in an implicit track and gets squeezed into a narrow
+  // column — that is exactly how the welcome hero broke while screens 1-4,
+  // which use .appbar, looked fine. Check every child class, not just the
+  // one that happened to break.
+  for (const cls of ['mockflag', 'appbar', 'hero', 'screen', 'nav']) {
+    const own = new RegExp(`\\.${cls}\\b[^{}]*\\{[^}]*grid-area`, 's');
+    const shared = new RegExp(`\\.${cls}\\b[^{]*,[^{]*\\{[^}]*grid-area`, 's');
+    check('desktop', `.${cls} has a grid area in the wide layout`,
+      own.test(wide) || shared.test(wide));
+  }
   // A layout class defined only inside the breakpoint leaves every phone with
   // an unstyled container. Any class used in JSX must exist in the base sheet.
   const base = at === -1 ? css : css.slice(0, at);

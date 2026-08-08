@@ -126,7 +126,9 @@ export function NavBar({ lang, screen, go, reach }) {
     ['actions', S.nav.action],
     ['plan', S.nav.goal],
   ];
-  const order = ['profile', 'insight', 'actions', 'plan'];
+  // 'welcome' is screen 0 and deliberately has no tab: it is not a step of
+  // the flow, and adding it would renumber the desktop rail's 1-4 counter.
+  const order = ['welcome', 'profile', 'insight', 'actions', 'plan'];
   return (
     <nav className="nav" aria-label="Sections">
       {items.map(([key, label]) => (

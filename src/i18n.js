@@ -13,6 +13,35 @@ const S = {
     optional: 'Optional',
     nav: { data: 'Data', action: 'Action', goal: 'Goal', me: 'Me' },
 
+    // ---------------------------------------------------------- screen 0
+    w_kicker: 'SDG 3 · Good health and well-being',
+    w_title: 'Malaysia publishes the data.\nWe turn it into one step.',
+    w_lead:
+      'Every year the Department of Statistics publishes what Malaysians die of. It is public, accurate, and almost unreadable. KiraSihat reads it for your age group and offers one general action — nothing more.',
+    w_start: 'Start — about 2 minutes',
+    w_seeData: 'See the data first',
+    w_scroll: 'Scroll to see the figures',
+    w_nationalTitle: 'Certified deaths in Malaysia, 2024',
+    w_nationalLead: (total) =>
+      `The four leading certified causes account for ${total.toLocaleString('en-MY')} deaths.`,
+    w_deathsUnit: 'deaths',
+    w_factorsTitle: 'The part that can change',
+    w_factorsLead:
+      'These are measured across Malaysian adults, not about you. They are why one small action is worth taking.',
+    w_howTitle: 'Four screens, then you are done',
+    w_step1: 'Tell us your age band',
+    w_step1b: 'No name, no IC number, no exact age.',
+    w_step2: 'See the official figures',
+    w_step2b: 'The leading certified cause for that band, with its source.',
+    w_step3: 'Choose one action',
+    w_step3b: 'Two or three general options, each with a safety note.',
+    w_step4: 'Keep the plan',
+    w_step4b: 'One goal, editable, deletable at any time.',
+    w_promiseTitle: 'What this is not',
+    w_promise1: 'Not a diagnosis, and not a substitute for a clinician.',
+    w_promise2: 'No personal risk score. We never tell you your chance of anything.',
+    w_promise3: 'Nothing about you is stored until you save a goal, and you can delete it.',
+
     // screen 1
     p_step: 'STEP 1 OF 3',
     p_title: 'Tell us a little',
@@ -162,6 +191,35 @@ const S = {
     required: 'Wajib',
     optional: 'Pilihan',
     nav: { data: 'Data', action: 'Tindakan', goal: 'Matlamat', me: 'Saya' },
+
+    // ---------------------------------------------------------- skrin 0
+    w_kicker: 'SDG 3 · Kesihatan yang baik dan kesejahteraan',
+    w_title: 'Malaysia menerbitkan datanya.\nKami jadikannya satu langkah.',
+    w_lead:
+      'Setiap tahun Jabatan Perangkaan menerbitkan punca kematian rakyat Malaysia. Ia terbuka, tepat, dan hampir mustahil dibaca. KiraSihat membacanya untuk kumpulan umur anda dan menawarkan satu tindakan umum — tidak lebih.',
+    w_start: 'Mula — kira-kira 2 minit',
+    w_seeData: 'Lihat data dahulu',
+    w_scroll: 'Tatal untuk melihat angka',
+    w_nationalTitle: 'Kematian disahkan di Malaysia, 2024',
+    w_nationalLead: (total) =>
+      `Empat punca utama yang disahkan merangkumi ${total.toLocaleString('en-MY')} kematian.`,
+    w_deathsUnit: 'kematian',
+    w_factorsTitle: 'Bahagian yang boleh berubah',
+    w_factorsLead:
+      'Ini diukur dalam kalangan dewasa Malaysia, bukan tentang anda. Inilah sebabnya satu tindakan kecil berbaloi.',
+    w_howTitle: 'Empat skrin, kemudian selesai',
+    w_step1: 'Beritahu kumpulan umur anda',
+    w_step1b: 'Tiada nama, tiada nombor IC, tiada umur tepat.',
+    w_step2: 'Lihat angka rasmi',
+    w_step2b: 'Punca disahkan utama bagi kumpulan itu, berserta sumbernya.',
+    w_step3: 'Pilih satu tindakan',
+    w_step3b: 'Dua atau tiga pilihan umum, setiap satu dengan nota keselamatan.',
+    w_step4: 'Simpan pelan',
+    w_step4b: 'Satu matlamat, boleh diubah, boleh dipadam bila-bila masa.',
+    w_promiseTitle: 'Apa yang ini bukan',
+    w_promise1: 'Bukan diagnosis, dan bukan pengganti pakar perubatan.',
+    w_promise2: 'Tiada skor risiko peribadi. Kami tidak pernah menyatakan kemungkinan anda.',
+    w_promise3: 'Tiada apa tentang anda disimpan sehingga anda simpan matlamat, dan anda boleh memadamnya.',
 
     p_step: 'LANGKAH 1 DARIPADA 3',
     p_title: 'Ceritakan sedikit tentang anda',

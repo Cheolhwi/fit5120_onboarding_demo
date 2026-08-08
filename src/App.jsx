@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Welcome from './screens/Welcome.jsx';
 import Profile from './screens/Profile.jsx';
 import Insight from './screens/Insight.jsx';
 import Actions from './screens/Actions.jsx';
@@ -14,7 +15,7 @@ const EMPTY_DRAFT = {
   consent: false,
 };
 
-const ORDER = ['profile', 'insight', 'actions', 'plan'];
+const ORDER = ['welcome', 'profile', 'insight', 'actions', 'plan'];
 
 // AC 2.2.2 — a starting value, not a requirement. Derived from the WHO figure
 // the walk_30 action quotes (150 min / 30 min = 5), never from the user.
@@ -38,8 +39,8 @@ export default function App() {
     const saved = globalThis.localStorage?.getItem('kirasihat.textSize');
     return saved === 'large' || saved === 'normal' ? saved : 'normal';
   });
-  const [screen, setScreen] = useState('profile');
-  const [reach, setReach] = useState('profile');       // furthest screen unlocked
+  const [screen, setScreen] = useState('welcome');
+  const [reach, setReach] = useState('welcome');       // furthest screen unlocked
   const [draft, setDraft] = useState(EMPTY_DRAFT);     // held in memory only
   const [bands, setBands] = useState([]);
   const [selected, setSelected] = useState('');
@@ -108,8 +109,8 @@ export default function App() {
     setDraft(EMPTY_DRAFT);
     setSelected('');
     setSelectedTopic('');
-    setReach('profile');
-    setScreen('profile');
+    setReach('welcome');
+    setScreen('welcome');
   };
 
   const shared = { lang, setLang, textSize, setTextSize, go, reach };
@@ -140,6 +141,10 @@ export default function App() {
         <div className="mockflag">
           MOCK MODE — reading data/seed-data.json, no Appwrite connection
         </div>
+      )}
+
+      {screen === 'welcome' && (
+        <Welcome {...shared} onStart={() => advance('profile')} />
       )}
 
       {screen === 'profile' && (
